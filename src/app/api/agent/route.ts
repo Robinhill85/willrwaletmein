@@ -48,7 +48,8 @@ export async function POST(req: Request) {
   const cmcLog: CmcCall[] = [];
   const sources: string[] = [];
   let text = "";
-  let action: { action: string; amount?: string; reasoning: string } | null = null;
+  type Proposed = { action: string; amount?: string; reasoning: string };
+  const actions: Proposed[] = [];
 
   try {
   for (let turn = 0; turn < MAX_TURNS; turn++) {
@@ -70,7 +71,7 @@ export async function POST(req: Request) {
         text += block.text;
       } else if (block.type === "tool_use") {
         if (block.name === "propose_vault_action") {
-          action = block.input as { action: string; amount?: string; reasoning: string };
+          actions.push(block.input as Proposed);
           toolResults.push({ type: "tool_result", tool_use_id: block.id, content: "Proposal shown to the user as a confirm card." });
         } else {
           const run = await runTool(block.name, (block.input ?? {}) as Record<string, unknown>, cmcLog);
@@ -94,7 +95,8 @@ export async function POST(req: Request) {
 
   return Response.json({
     text: text.trim(),
-    action,
+    action: actions[0] ?? null,
+    actions,
     sources: Array.from(new Set(sources)),
     cmc_calls: cmcLog, // visible evidence of real API calls (endpoint, params, status, credits)
   });

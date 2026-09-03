@@ -8,8 +8,8 @@ export type ProposedAction = ProposedVaultAction;
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
-  action?: ProposedAction;
-  actionStatus?: "pending" | "sent";
+  actions?: ProposedAction[];
+  sent?: number[];
   sources?: string[];
 }
 
@@ -58,8 +58,8 @@ export function AgentChat({
       role: m.role,
       content:
         m.content ||
-        (m.action
-          ? `[Proposed ${ACTION_LABEL[m.action.action]}${m.action.amount ? ` of ${m.action.amount}` : ""}: ${m.action.reasoning}]`
+        (m.actions?.length
+          ? m.actions.map((a) => `[Proposed ${ACTION_LABEL[a.action]}${a.amount ? ` of ${a.amount}` : ""}: ${a.reasoning}]`).join(" ")
           : ""),
     }));
   }
@@ -81,7 +81,7 @@ export function AgentChat({
       if (!res.ok) throw new Error(data?.error ?? `Agent request failed (${res.status})`);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: data.text ?? "", action: data.action ?? undefined, sources: data.sources ?? [] },
+        { role: "assistant", content: data.text ?? "", actions: data.actions?.length ? data.actions : data.action ? [data.action] : undefined, sources: data.sources ?? [] },
       ]);
     } catch (err) {
       setMessages((prev) => [
@@ -93,12 +93,12 @@ export function AgentChat({
     }
   }
 
-  function confirm(index: number, action: ProposedAction) {
+  function confirm(index: number, k: number, action: ProposedAction) {
     onConfirmAction(action);
-    setMessages((prev) => prev.map((m, i) => (i === index ? { ...m, actionStatus: "sent" } : m)));
+    setMessages((prev) => prev.map((m, i) => (i === index ? { ...m, sent: [...(m.sent ?? []), k] } : m)));
   }
-  function dismiss(index: number) {
-    setMessages((prev) => prev.map((m, i) => (i === index ? { ...m, action: undefined } : m)));
+  function dismiss(index: number, k: number) {
+    setMessages((prev) => prev.map((m, i) => (i === index ? { ...m, actions: m.actions?.filter((_, j) => j !== k) } : m)));
   }
 
   return (
@@ -125,26 +125,26 @@ export function AgentChat({
                 ))}
               </div>
             )}
-            {m.action && (
-              <div className="mt-2 text-left inline-block w-full max-w-[88%] panel-deep p-3 space-y-2" style={{ borderColor: "var(--accent)" }}>
-                <div className="k" style={{ color: "var(--accent)" }}>Proposed action — you sign</div>
+            {m.actions?.map((a, k) => (
+              <div key={k} className="mt-2 text-left inline-block w-full max-w-[88%] panel-deep p-3 space-y-2" style={{ borderColor: "var(--accent)" }}>
+                <div className="k" style={{ color: "var(--accent)" }}>Proposed action {m.actions!.length > 1 ? `${k + 1} of ${m.actions!.length}` : ""} — you sign</div>
                 <div className="font-semibold">
-                  {ACTION_LABEL[m.action.action]}{m.action.amount ? ` — ${m.action.amount}` : ""}
+                  {ACTION_LABEL[a.action]}{a.amount ? ` — ${a.amount}` : ""}
                 </div>
-                <div className="text-xs muted">{m.action.reasoning}</div>
-                {m.actionStatus === "sent" ? (
-                  <p className="text-xs muted">Sent to your wallet — watch the transaction status below.</p>
+                <div className="text-xs muted">{a.reasoning}</div>
+                {m.sent?.includes(k) ? (
+                  <p className="text-xs muted">Sent to your wallet — watch the transaction status in the side panel.</p>
                 ) : (
                   <div className="flex gap-2 pt-1">
-                    <button className="btn btn-accent" onClick={() => confirm(i, m.action!)} disabled={!canPropose}>
+                    <button className="btn btn-accent" onClick={() => confirm(i, k, a)} disabled={!canPropose}>
                       Confirm in wallet
                     </button>
-                    <button className="btn" onClick={() => dismiss(i)}>Dismiss</button>
+                    <button className="btn" onClick={() => dismiss(i, k)}>Dismiss</button>
                   </div>
                 )}
                 {!canPropose && <p className="text-xs down">Connect a wallet to confirm this.</p>}
               </div>
-            )}
+            ))}
           </div>
         ))}
         {isLoading && <div className="text-xs muted">Checking the ledger and live data…</div>}
