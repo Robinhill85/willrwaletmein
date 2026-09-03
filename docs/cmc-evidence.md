@@ -260,3 +260,18 @@ The field that makes the premium/discount answer possible: `tokens[]` carries ea
 - `tokenized_market_cap` is frequently `0` for assets that clearly trade (e.g. ICE with $46k 24h volume) — looks like a coverage/aggregation gap rather than a true zero.
 - There is no yield/APY, no TVL and no vault-level object; tokenized *funds* (BUIDL, USDY, JTRSY) are thin relative to tokenized equities. Eligibility and yield therefore still come from our own registry + DeFiLlama.
 - `market-pairs/list` is Growth-tier only, so venue-level liquidity was out of reach on the Startup tier.
+
+## What the agent does with it (real answer, 2026-09-03 23:10 UTC)
+
+Prompt: *"Is tokenized NVDA trading at a premium or discount to the real stock right now, and which issuer is closest to fair?"* — two CMC calls (`quotes/latest` + `info`, 1 credit each):
+
+| Issuer | Token | Price | Δ vs blended avg ($229.03) |
+|---|---|---|---|
+| Robinhood | NVDA | $228.64 | –0.17% |
+| Backed Assets | NVDAX | $229.50 | +0.20% |
+| Ondo | NVDAon | $229.42 | +0.17% |
+| Reality | rNVDA | $229.41 | +0.17% |
+| bStocks | NVDAB | $229.36 | +0.14% |
+| Dinari | NVDA.D | no live price | — |
+
+The agent flagged that the spread is across tokenized venues rather than a verified basis to the NASDAQ tick — the API's `tokens[]` per issuer makes the comparison possible; a primary-exchange reference price would make it exact.

@@ -73,7 +73,8 @@ export async function cmcGet<T = unknown>(
     creditCount: body?.status?.credit_count,
     elapsedMs: Date.now() - t0,
   });
-  if (!res.ok || (body?.status?.error_code ?? 0) !== 0) {
+  // CMC serialises error_code as a string ("0"), so compare numerically.
+  if (!res.ok || Number(body?.status?.error_code ?? 0) !== 0) {
     throw new CmcError(
       body?.status?.error_message || `CMC request failed (${res.status})`,
       res.status,
