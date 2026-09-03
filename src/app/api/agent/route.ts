@@ -39,6 +39,10 @@ export async function POST(req: Request) {
     return Response.json({ error: "messages required" }, { status: 400 });
   }
 
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return Response.json({ error: "The agent isn't configured on this deployment yet (missing model key). The ledger below still works." }, { status: 503 });
+  }
+
   const tools = [PROPOSE_VAULT_ACTION_TOOL as unknown as Anthropic.Tool, ...AGENT_TOOLS];
   const convo: Anthropic.MessageParam[] = messages.slice(-16).map((m) => ({ role: m.role, content: m.content }));
   const cmcLog: CmcCall[] = [];
@@ -46,6 +50,7 @@ export async function POST(req: Request) {
   let text = "";
   let action: { action: string; amount?: string; reasoning: string } | null = null;
 
+  try {
   for (let turn = 0; turn < MAX_TURNS; turn++) {
     const response = await client.messages.create({
       model: "claude-sonnet-5",
@@ -80,6 +85,11 @@ export async function POST(req: Request) {
     convo.push({ role: "user", content: toolResults });
     // Text emitted before a tool call is usually "let me check…"; keep only the final answer.
     if (turn < MAX_TURNS - 1) text = "";
+  }
+
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "agent failed";
+    return Response.json({ error: `Agent error: ${msg}` }, { status: 502 });
   }
 
   return Response.json({
