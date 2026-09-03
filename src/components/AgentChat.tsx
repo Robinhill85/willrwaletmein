@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { ProposedVaultAction } from "@ixswap1/vault-agent-sdk";
+import { Markdown } from "./Markdown";
 
 export type ProposedAction = ProposedVaultAction;
 
@@ -114,8 +115,8 @@ export function AgentChat({
         {messages.map((m, i) => (
           <div key={i} className={m.role === "user" ? "text-right" : "text-left"}>
             {m.content && (
-              <div className={`inline-block max-w-[88%] whitespace-pre-wrap text-left ${m.role === "user" ? "bubble-user" : "bubble-agent"}`}>
-                {m.content}
+              <div className={`inline-block max-w-[88%] text-left ${m.role === "user" ? "bubble-user whitespace-pre-wrap" : "bubble-agent"}`}>
+                {m.role === "user" ? m.content : <Markdown text={m.content} />}
               </div>
             )}
             {m.sources && m.sources.length > 0 && (
