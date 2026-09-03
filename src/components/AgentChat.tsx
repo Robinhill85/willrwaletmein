@@ -43,7 +43,7 @@ export function AgentChat({
     {
       role: "assistant",
       content:
-        "I'm your agent. Ask me which real-world-asset vaults will actually let you in, what backs them, or what a tokenized asset is worth right now — or tell me what to do in the IXS vault (\"deposit 100 USDC\") and I'll draft it for your wallet to sign. I never hold keys.",
+        "I'm your agent. Two things I can do:\n\n1. Answer anything about real-world-asset vaults: which ones will let you in, on what terms, and what actually backs them.\n2. Deposit directly into the IXS vault, the first agent-addressable RWA vault (from $100 USDC on Avalanche). Connect your wallet, then tell me the amount here in the chat and I'll draft it for you to sign.\n\nVault terms come from vaultterms.com, live market data from CoinMarketCap. I never hold keys.",
     },
   ]);
   const [input, setInput] = useState("");
