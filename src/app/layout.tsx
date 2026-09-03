@@ -1,29 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "IXS Vault Agent",
-  description: "Agent dashboard for the InvestaX ix7540v1 vault on Avalanche",
+  title: "Will RWA let me in? — an agent for real-world-asset yield",
+  description:
+    "Yield that doesn't need a bull market. Ask the agent which RWA vaults will actually let you in — powered by CoinMarketCap RWA data and the VaultTerms registry — and deposit into the IXS agent-first vault from your own wallet.",
+  metadataBase: new URL("https://willrwaletmein.com"),
+  openGraph: {
+    title: "Will RWA let me in?",
+    description: "Yield that doesn't need a bull market. The agent that answers — and can deposit for you.",
+    images: ["/hero.jpg"],
+  },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>
       </body>

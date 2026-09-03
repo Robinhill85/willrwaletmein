@@ -1,70 +1,91 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { PROPOSE_VAULT_ACTION_TOOL } from "@ixswap1/vault-agent-sdk";
+import { AGENT_TOOLS, runTool } from "@/lib/tools";
+import type { CmcCall } from "@/lib/cmc";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 const client = new Anthropic();
 
-const SYSTEM_PROMPT = `You are an agent for an InvestaX tokenized RWA vault ("ix7540v1") on Avalanche C-Chain. You help the connected user understand the vault and can propose transactions for them to review.
+const SYSTEM_PROMPT = `You are the agent on willrwaletmein.com — "Will RWA let me in?". You help a person (or another agent) find real-world-asset yield they can actually access, and you operate the IXS High Yield Corporate Bond vault ("ix7540v1", ERC-7540, Avalanche C-Chain) for the connected wallet.
 
-The vault is an ERC-7540 async vault: deposits and redemptions are two-step (request -> operator fulfills -> claim), not instant. You are given the current on-chain state as JSON context below on every turn.
+You have three kinds of tools:
+1. VaultTerms registry (vault_ledger_search, vault_terms): hand-verified terms for ~26 RWA vaults — who is admitted (US/EU/rest of world), minimums, KYC tier, redemption, fees, risks, where to invest. This is the source of truth for eligibility and terms.
+2. CoinMarketCap Real-World Assets API (cmc_rwa_lookup, cmc_rwa_issuers): live tokenized-asset market data — tokenized price and market cap, underlying on-chain tokens, TradFi venues, and the issuer graph. Use it for "what is tokenized X worth", premium/discount vs TradFi, category sizing, and "who issues this".
+3. propose_vault_action (IXS vault): drafts approve / requestDeposit / requestRedeem / claimDeposit / claimRedeem for the connected wallet to sign. You never sign or submit; the app renders your proposal as a confirm card.
 
-Rules:
-- You never execute transactions yourself. When the user clearly expresses intent to act (deposit, redeem, approve, claim), call the propose_vault_action tool instead of just describing it - the app renders your proposal as a confirm/dismiss card, and the user's own wallet (MetaMask etc.) signs it. You cannot bypass that signature step and should not imply otherwise.
-- Do not call propose_vault_action for hypothetical questions ("what would happen if...", "how do I...") - only for a clear, current instruction to act.
-- If no wallet is connected (connectedWallet is null in the context), don't propose actions - tell the user to connect first.
-- If claimDeposit is proposed but userClaimableDeposit is "0" or null, say there's nothing to claim instead of proposing it. Same for claimRedeem and userClaimableRedeem.
-- Be direct and concise. No boilerplate disclaimers ("consult a financial advisor") on routine questions - this is a professional user. Do flag genuine risks (e.g. large pending unfulfilled requests, stale data, unverified contract source) plainly when relevant.
-- If on-chain values are missing/null, say what's missing rather than guessing.
-- Reference specific numbers from the provided context instead of speaking generically.`;
-
-// Tool schema comes from @ixswap1/vault-agent-sdk so this route stays a
-// consumer of the published SDK rather than a second copy of the schema.
+How to answer:
+- Eligibility questions: call vault_ledger_search with the person's region, budget and KYC tolerance; answer with the specific vaults, their minimums and KYC tier, and name the trade-offs. Group by access: agent-addressable / basic KYC / no KYC. No-KYC vaults are crypto-native yield (lending books, carry trades) — say so plainly; regulated fund wrappers sit behind KYC.
+- Market questions about a tokenized asset: call cmc_rwa_lookup. Quote the numbers with the endpoint's timestamp. If the CMC figure cannot be fetched, say so and answer from the registry.
+- The IXS vault: it is agent-first. Deposits by an agent (including you, on behalf of the connected user) are permissionless — no KYC, no whitelist. A human wanting the manual route uses the permissioned vault with basic KYC at vaults.ixs.finance. When the user clearly instructs an action (deposit 100, redeem, claim), call propose_vault_action; for hypotheticals, do not. If no wallet is connected, ask them to connect first. Deposits are async: request → operator fulfils → claim.
+- Yields are targets or trailing figures, never guarantees; the IXS target is 7%/yr with ~5% trailing and a junk-bond-ETF underlying (SHYG) whose NAV can fall. Say this once when relevant, not as boilerplate.
+- Be direct and specific: numbers, names, minimums. No "consult an advisor" filler. Flag real risks plainly. If a value is missing, say what is missing rather than guessing.
+- Disclosure when relevant: the site is built by IXS's growth partner; the registry holds IXS to the same verified-terms standard as every other vault.`;
 
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
 }
 
+const MAX_TURNS = 6;
+
 export async function POST(req: Request) {
   const { messages, vaultContext } = (await req.json()) as {
     messages: ChatMessage[];
     vaultContext: Record<string, unknown>;
   };
-
   if (!Array.isArray(messages) || messages.length === 0) {
     return Response.json({ error: "messages required" }, { status: 400 });
   }
 
-  const response = await client.messages.create({
-    model: "claude-sonnet-5",
-    max_tokens: 1024,
-    output_config: { effort: "medium" },
-    system: [
-      {
-        type: "text",
-        text: SYSTEM_PROMPT,
-        cache_control: { type: "ephemeral" },
-      },
-      {
-        type: "text",
-        text: `Current on-chain vault state:\n${JSON.stringify(vaultContext, null, 2)}`,
-      },
-    ],
-    tools: [PROPOSE_VAULT_ACTION_TOOL as unknown as Anthropic.Tool],
-    messages: messages.map((m) => ({ role: m.role, content: m.content })),
-  });
-
+  const tools = [PROPOSE_VAULT_ACTION_TOOL as unknown as Anthropic.Tool, ...AGENT_TOOLS];
+  const convo: Anthropic.MessageParam[] = messages.slice(-16).map((m) => ({ role: m.role, content: m.content }));
+  const cmcLog: CmcCall[] = [];
+  const sources: string[] = [];
   let text = "";
   let action: { action: string; amount?: string; reasoning: string } | null = null;
 
-  for (const block of response.content) {
-    if (block.type === "text") {
-      text += block.text;
-    } else if (block.type === "tool_use" && block.name === "propose_vault_action") {
-      action = block.input as { action: string; amount?: string; reasoning: string };
+  for (let turn = 0; turn < MAX_TURNS; turn++) {
+    const response = await client.messages.create({
+      model: "claude-sonnet-5",
+      max_tokens: 1500,
+      output_config: { effort: "medium" },
+      system: [
+        { type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } },
+        { type: "text", text: `Current on-chain IXS vault state (live):\n${JSON.stringify(vaultContext, null, 2)}` },
+      ],
+      tools,
+      messages: convo,
+    });
+
+    const toolResults: Anthropic.ToolResultBlockParam[] = [];
+    for (const block of response.content) {
+      if (block.type === "text") {
+        text += block.text;
+      } else if (block.type === "tool_use") {
+        if (block.name === "propose_vault_action") {
+          action = block.input as { action: string; amount?: string; reasoning: string };
+          toolResults.push({ type: "tool_result", tool_use_id: block.id, content: "Proposal shown to the user as a confirm card." });
+        } else {
+          const run = await runTool(block.name, (block.input ?? {}) as Record<string, unknown>, cmcLog);
+          sources.push(run.source);
+          toolResults.push({ type: "tool_result", tool_use_id: block.id, content: run.result });
+        }
+      }
     }
+
+    if (response.stop_reason !== "tool_use" || toolResults.length === 0) break;
+    convo.push({ role: "assistant", content: response.content });
+    convo.push({ role: "user", content: toolResults });
+    // Text emitted before a tool call is usually "let me check…"; keep only the final answer.
+    if (turn < MAX_TURNS - 1) text = "";
   }
 
-  return Response.json({ text, action });
+  return Response.json({
+    text: text.trim(),
+    action,
+    sources: Array.from(new Set(sources)),
+    cmc_calls: cmcLog, // visible evidence of real API calls (endpoint, params, status, credits)
+  });
 }

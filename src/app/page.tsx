@@ -1,15 +1,10 @@
 "use client";
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatUnits, parseUnits, type Address } from "viem";
-import {
-  useAccount,
-  useReadContract,
-  useWriteContract,
-  useWaitForTransactionReceipt,
-} from "wagmi";
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import {
   vaultAbi,
   erc20Abi,
@@ -22,16 +17,21 @@ import {
   buildClaimRedeemTx,
 } from "@ixswap1/vault-agent-sdk";
 import { AgentChat, type ProposedAction } from "@/components/AgentChat";
-import { AboutAgent } from "@/components/AboutAgent";
+import { OtherVaults } from "@/components/OtherVaults";
+import { HowItWorks } from "@/components/HowItWorks";
 
 const VAULT_CONFIG = KNOWN_VAULTS["avax-ixhyb"];
 const VAULT_ADDRESS = VAULT_CONFIG.address;
 
-function StatCard({ label, value }: { label: string; value: string }) {
+function fmtUsd(n: number) {
+  return n >= 1e6 ? `$${(n / 1e6).toFixed(2)}M` : `$${Math.round(n).toLocaleString("en-US")}`;
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-black/10 dark:border-white/10 p-4">
-      <div className="text-xs uppercase tracking-wide opacity-60">{label}</div>
-      <div className="text-lg font-medium mt-1 break-all">{value}</div>
+    <div className="panel-deep p-3">
+      <div className="k">{label}</div>
+      <div className="font-semibold mt-0.5 break-all text-[15px]">{value}</div>
     </div>
   );
 }
@@ -40,6 +40,8 @@ export default function Home() {
   const { address, isConnected } = useAccount();
   const [depositAmount, setDepositAmount] = useState("");
   const [redeemAmount, setRedeemAmount] = useState("");
+  const [promoBadge, setPromoBadge] = useState<string | null>(null);
+  const onPromo = useCallback((b: string | null) => setPromoBadge(b), []);
 
   const vault = { address: VAULT_ADDRESS, abi: vaultAbi } as const;
 
@@ -51,14 +53,11 @@ export default function Home() {
   const { data: assetAddress } = useReadContract({ ...vault, functionName: "asset" });
 
   const { data: shareBalance } = useReadContract({
-    ...vault,
-    functionName: "balanceOf",
-    args: address ? [address] : undefined,
-    query: { enabled: !!address },
+    ...vault, functionName: "balanceOf", args: address ? [address] : undefined, query: { enabled: !!address },
   });
 
-  // @ixswap1/vault-agent-sdk resolves the correct ERC-7540 requestId from
-  // the subgraph - it increments per request (1, 2, 3...), not always 0.
+  // @ixswap1/vault-agent-sdk resolves the current ERC-7540 requestId from the
+  // subgraph — it increments per request (1, 2, 3…), not always 0.
   const { data: requestIds } = useQuery({
     queryKey: ["vault-request-ids", VAULT_ADDRESS, address],
     queryFn: () => fetchLatestRequestIds(VAULT_CONFIG, address as Address),
@@ -67,76 +66,43 @@ export default function Home() {
   });
 
   const { data: pendingDeposit } = useReadContract({
-    ...vault,
-    functionName: "pendingDepositRequest",
-    args: address && requestIds?.depositPendingId
-      ? [BigInt(requestIds.depositPendingId), address]
-      : undefined,
+    ...vault, functionName: "pendingDepositRequest",
+    args: address && requestIds?.depositPendingId ? [BigInt(requestIds.depositPendingId), address] : undefined,
     query: { enabled: !!address && !!requestIds?.depositPendingId },
   });
-
   const { data: claimableDeposit } = useReadContract({
-    ...vault,
-    functionName: "claimableDepositRequest",
-    args: address && requestIds?.depositFinalizedId
-      ? [BigInt(requestIds.depositFinalizedId), address]
-      : undefined,
+    ...vault, functionName: "claimableDepositRequest",
+    args: address && requestIds?.depositFinalizedId ? [BigInt(requestIds.depositFinalizedId), address] : undefined,
     query: { enabled: !!address && !!requestIds?.depositFinalizedId },
   });
-
   const { data: pendingRedeem } = useReadContract({
-    ...vault,
-    functionName: "pendingRedeemRequest",
-    args: address && requestIds?.redeemPendingId
-      ? [BigInt(requestIds.redeemPendingId), address]
-      : undefined,
+    ...vault, functionName: "pendingRedeemRequest",
+    args: address && requestIds?.redeemPendingId ? [BigInt(requestIds.redeemPendingId), address] : undefined,
     query: { enabled: !!address && !!requestIds?.redeemPendingId },
   });
-
   const { data: claimableRedeem } = useReadContract({
-    ...vault,
-    functionName: "claimableRedeemRequest",
-    args: address && requestIds?.redeemFinalizedId
-      ? [BigInt(requestIds.redeemFinalizedId), address]
-      : undefined,
+    ...vault, functionName: "claimableRedeemRequest",
+    args: address && requestIds?.redeemFinalizedId ? [BigInt(requestIds.redeemFinalizedId), address] : undefined,
     query: { enabled: !!address && !!requestIds?.redeemFinalizedId },
   });
 
   const assetToken = { address: assetAddress as Address | undefined, abi: erc20Abi } as const;
-
-  const { data: assetSymbol } = useReadContract({
-    ...assetToken,
-    functionName: "symbol",
-    query: { enabled: !!assetAddress },
-  });
-
-  const { data: assetDecimals } = useReadContract({
-    ...assetToken,
-    functionName: "decimals",
-    query: { enabled: !!assetAddress },
-  });
-
+  const { data: assetSymbol } = useReadContract({ ...assetToken, functionName: "symbol", query: { enabled: !!assetAddress } });
+  const { data: assetDecimals } = useReadContract({ ...assetToken, functionName: "decimals", query: { enabled: !!assetAddress } });
   const { data: assetBalance } = useReadContract({
-    ...assetToken,
-    functionName: "balanceOf",
-    args: address ? [address] : undefined,
-    query: { enabled: !!assetAddress && !!address },
+    ...assetToken, functionName: "balanceOf", args: address ? [address] : undefined, query: { enabled: !!assetAddress && !!address },
   });
-
   const { data: allowance } = useReadContract({
-    ...assetToken,
-    functionName: "allowance",
-    args: address ? [address, VAULT_ADDRESS] : undefined,
-    query: { enabled: !!assetAddress && !!address },
+    ...assetToken, functionName: "allowance", args: address ? [address, VAULT_ADDRESS] : undefined, query: { enabled: !!assetAddress && !!address },
   });
 
   const { writeContract, data: txHash, isPending, error: writeError } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: txHash,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash: txHash });
 
   const dec = typeof assetDecimals === "number" ? assetDecimals : 18;
   const shareDec = typeof decimals === "number" ? decimals : 18;
+  const sym = typeof assetSymbol === "string" ? assetSymbol : "USDC";
+  const tvl = totalAssets !== undefined ? Number(formatUnits(totalAssets as bigint, dec)) : null;
 
   const vaultContext = {
     vaultAddress: VAULT_ADDRESS,
@@ -145,237 +111,178 @@ export default function Home() {
     vaultName: typeof name === "string" ? name : null,
     vaultSymbol: typeof symbol === "string" ? symbol : null,
     assetAddress: assetAddress ?? null,
-    assetSymbol: typeof assetSymbol === "string" ? assetSymbol : null,
-    totalAssets: totalAssets !== undefined ? formatUnits(totalAssets as bigint, dec) : null,
+    assetSymbol: sym,
+    totalAssets: tvl != null ? String(tvl) : null,
     totalShares: totalSupply !== undefined ? formatUnits(totalSupply as bigint, shareDec) : null,
     connectedWallet: address ?? null,
     userAssetBalance: assetBalance !== undefined ? formatUnits(assetBalance as bigint, dec) : null,
     userShareBalance: shareBalance !== undefined ? formatUnits(shareBalance as bigint, shareDec) : null,
-    userPendingDepositRequest:
-      pendingDeposit !== undefined ? formatUnits(pendingDeposit as bigint, dec) : null,
-    userClaimableDeposit:
-      claimableDeposit !== undefined ? formatUnits(claimableDeposit as bigint, dec) : null,
-    userPendingRedeemRequest:
-      pendingRedeem !== undefined ? formatUnits(pendingRedeem as bigint, shareDec) : null,
-    userClaimableRedeem:
-      claimableRedeem !== undefined ? formatUnits(claimableRedeem as bigint, dec) : null,
+    userAllowance: allowance !== undefined ? formatUnits(allowance as bigint, dec) : null,
+    userPendingDepositRequest: pendingDeposit !== undefined ? formatUnits(pendingDeposit as bigint, dec) : null,
+    userClaimableDeposit: claimableDeposit !== undefined ? formatUnits(claimableDeposit as bigint, dec) : null,
+    userPendingRedeemRequest: pendingRedeem !== undefined ? formatUnits(pendingRedeem as bigint, shareDec) : null,
+    userClaimableRedeem: claimableRedeem !== undefined ? formatUnits(claimableRedeem as bigint, dec) : null,
   };
 
   const needsApproval =
-    allowance !== undefined &&
-    depositAmount &&
-    parseUnits(depositAmount || "0", dec) > (allowance as bigint);
+    allowance !== undefined && depositAmount && parseUnits(depositAmount || "0", dec) > (allowance as bigint);
 
-  // Every write below builds its unsigned tx via the SDK, then hands it to
-  // wagmi's writeContract as-is - the SDK never signs anything itself.
-
-  function handleApprove() {
-    if (!assetAddress) return;
-    writeContract(buildApproveTx(VAULT_CONFIG, assetAddress as Address, depositAmount || "0", dec));
-  }
-
-  function handleRequestDeposit() {
+  // Every write builds its unsigned tx via the SDK, then hands it to wagmi's
+  // writeContract — the SDK never signs anything itself.
+  function handleAgentAction(p: ProposedAction) {
     if (!address) return;
-    writeContract(buildRequestDepositTx(VAULT_CONFIG, address, depositAmount || "0", dec));
-  }
-
-  function handleRequestRedeem() {
-    if (!address) return;
-    writeContract(buildRequestRedeemTx(VAULT_CONFIG, address, redeemAmount || "0", shareDec));
-  }
-
-  function handleClaimDeposit() {
-    if (!address || claimableDeposit === undefined) return;
-    writeContract(buildClaimDepositTx(VAULT_CONFIG, address, claimableDeposit as bigint));
-  }
-
-  function handleAgentAction(proposed: ProposedAction) {
-    if (!address) return;
-    switch (proposed.action) {
-      case "approve": {
-        if (!assetAddress || !proposed.amount) return;
-        writeContract(buildApproveTx(VAULT_CONFIG, assetAddress as Address, proposed.amount, dec));
+    switch (p.action) {
+      case "approve":
+        if (assetAddress && p.amount) writeContract(buildApproveTx(VAULT_CONFIG, assetAddress as Address, p.amount, dec));
         break;
-      }
-      case "requestDeposit": {
-        if (!proposed.amount) return;
-        writeContract(buildRequestDepositTx(VAULT_CONFIG, address, proposed.amount, dec));
+      case "requestDeposit":
+        if (p.amount) writeContract(buildRequestDepositTx(VAULT_CONFIG, address, p.amount, dec));
         break;
-      }
-      case "requestRedeem": {
-        if (!proposed.amount) return;
-        writeContract(buildRequestRedeemTx(VAULT_CONFIG, address, proposed.amount, shareDec));
+      case "requestRedeem":
+        if (p.amount) writeContract(buildRequestRedeemTx(VAULT_CONFIG, address, p.amount, shareDec));
         break;
-      }
-      case "claimDeposit": {
-        if (claimableDeposit === undefined) return;
-        writeContract(buildClaimDepositTx(VAULT_CONFIG, address, claimableDeposit as bigint));
+      case "claimDeposit":
+        if (claimableDeposit !== undefined) writeContract(buildClaimDepositTx(VAULT_CONFIG, address, claimableDeposit as bigint));
         break;
-      }
-      case "claimRedeem": {
-        if (claimableRedeem === undefined) return;
-        writeContract(buildClaimRedeemTx(VAULT_CONFIG, address, claimableRedeem as bigint));
+      case "claimRedeem":
+        if (claimableRedeem !== undefined) writeContract(buildClaimRedeemTx(VAULT_CONFIG, address, claimableRedeem as bigint));
         break;
-      }
     }
   }
 
   return (
-    <div className="max-w-6xl mx-auto w-full p-6 sm:p-10 space-y-8">
+    <main className="max-w-[1060px] mx-auto w-full px-5 py-8 sm:py-10 space-y-8">
       <header className="flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-semibold">
-            {typeof name === "string" ? name : "IXS Vault"} {typeof symbol === "string" ? `(${symbol})` : ""}
-          </h1>
-          <p className="text-sm opacity-60 mt-1 break-all">
-            {VAULT_ADDRESS} · Avalanche C-Chain · ERC-7540 async vault
-          </p>
-        </div>
-        <ConnectButton />
+        <div className="eyebrow">willrwaletmein.com</div>
+        <ConnectButton showBalance={false} chainStatus="icon" />
       </header>
 
-      <AboutAgent />
-
-      <div className="grid lg:grid-cols-[minmax(0,1fr)_22rem] gap-8 items-start">
-      <div className="space-y-8">
-      <section className="grid grid-cols-2 gap-4">
-        <StatCard
-          label="Total assets"
-          value={
-            totalAssets !== undefined
-              ? `${formatUnits(totalAssets as bigint, dec)} ${
-                  typeof assetSymbol === "string" ? assetSymbol : ""
-                }`
-              : "—"
-          }
-        />
-        <StatCard
-          label="Total shares"
-          value={totalSupply !== undefined ? formatUnits(totalSupply as bigint, shareDec) : "—"}
-        />
+      {/* Hero */}
+      <section className="flex flex-col md:flex-row gap-6 items-start">
+        <div className="min-w-0">
+          <h1 className="h1" style={{ maxWidth: "15em" }}>
+            Yield that doesn&apos;t need <em>a bull market.</em>
+          </h1>
+          <p className="mt-4 text-[16.5px] max-w-[42em]" style={{ color: "#e6ecff" }}>
+            <strong className="text-white">Most DeFi yield is recycled crypto</strong> — token emissions, trader leverage, points. It spikes when everyone&apos;s greedy and evaporates when they&apos;re not.{" "}
+            <strong className="text-white">RWA yield is paid by the other economy:</strong> T-bill coupons, bond interest, insurance premiums, real loan repayments — cash flows that arrive whether crypto pumps or not, settled to your wallet onchain.
+          </p>
+          <p className="mt-3 muted text-sm">
+            So — will RWA let <em>you</em> in? Ask the agent. It reads the verified terms of ~26 vaults and live CoinMarketCap RWA data, and it can deposit into the IXS vault for you.
+          </p>
+        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/hero.jpg" alt="Engraved bank vault on a pedestal labeled Tokenized Real-World Assets" className="rounded-xl border w-full md:w-[300px] md:max-w-[34%] shadow-[0_8px_30px_rgba(0,0,0,.25)]" style={{ borderColor: "var(--line)" }} />
       </section>
 
-      {!isConnected ? (
-        <p className="text-sm opacity-70">Connect a wallet to view your position and submit requests.</p>
-      ) : (
-        <>
-          <section className="grid grid-cols-2 gap-4">
-            <StatCard
-              label={`Your ${typeof assetSymbol === "string" ? assetSymbol : "asset"} balance`}
-              value={assetBalance !== undefined ? formatUnits(assetBalance as bigint, dec) : "—"}
-            />
-            <StatCard
-              label="Your shares"
-              value={shareBalance !== undefined ? formatUnits(shareBalance as bigint, shareDec) : "—"}
-            />
-            <StatCard
-              label="Pending deposit request"
-              value={pendingDeposit !== undefined ? formatUnits(pendingDeposit as bigint, dec) : "—"}
-            />
-            <StatCard
-              label="Claimable deposit"
-              value={claimableDeposit !== undefined ? formatUnits(claimableDeposit as bigint, dec) : "—"}
-            />
-            <StatCard
-              label="Pending redeem request"
-              value={pendingRedeem !== undefined ? formatUnits(pendingRedeem as bigint, shareDec) : "—"}
-            />
-          </section>
-
-          <section className="space-y-3 rounded-lg border border-black/10 dark:border-white/10 p-4">
-            <div className="flex items-center gap-2">
-              <h2 className="font-medium">Request deposit</h2>
-              <span className="text-[10px] uppercase tracking-wide rounded-full border border-black/10 dark:border-white/10 px-2 py-0.5 opacity-60">
-                Direct helper
-              </span>
+      {/* Spotlight — live from chain */}
+      <section className="spotlight p-5">
+        <div className="flex items-baseline gap-3 mb-1">
+          <span className="eyebrow">New — the first agent-first RWA vault</span>
+        </div>
+        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+          <div>
+            <div className="font-bold text-lg">{typeof name === "string" ? name : "IXS High Yield Corporate Bond Vault"} <span className="muted font-normal text-sm">· Avalanche · ERC-7540</span></div>
+            <div className="text-[13.5px] mt-1" style={{ color: "#dde5ff" }}>
+              USDC vault deployed via OpenTrade into the iShares 0–5 Year High Yield Corporate Bond ETF (SHYG). Real bond coupons, daily accrual, next-day exits.
             </div>
-            <p className="text-xs opacity-60">
-              ERC-7540 vaults are async: this submits a request. The vault operator fulfills it,
-              then you claim shares. This form triggers the same on-chain call the agent proposes
-              in chat — use whichever is faster for you.
-            </p>
-            <div className="flex gap-2">
-              <input
-                className="flex-1 rounded border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm"
-                placeholder="Amount"
-                value={depositAmount}
-                onChange={(e) => setDepositAmount(e.target.value)}
-              />
-              {needsApproval ? (
-                <button
-                  className="rounded bg-foreground text-background px-4 py-2 text-sm font-medium disabled:opacity-50"
-                  onClick={handleApprove}
-                  disabled={isPending || isConfirming}
-                >
-                  Approve
-                </button>
-              ) : (
-                <button
-                  className="rounded bg-foreground text-background px-4 py-2 text-sm font-medium disabled:opacity-50"
-                  onClick={handleRequestDeposit}
-                  disabled={isPending || isConfirming || !depositAmount}
-                >
-                  Request deposit
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
+              <span className="stamp new">New</span>
+              <span className="stamp agent">Agent addressable</span>
+              <span className="stamp open">No KYC · agents</span>
+              <span className="stamp kyc">Basic KYC · humans</span>
+              {promoBadge && <span className="stamp bonus">{promoBadge}</span>}
+            </div>
+          </div>
+          <div className="md:text-right">
+            <div className="fig">7% <small>target · ~5% trailing</small></div>
+            <div className="text-xs muted mt-0.5">TVL {tvl != null ? fmtUsd(tvl) : "…"} <span style={{ color: "var(--accent2)" }}>live onchain</span> · $100 min</div>
+            <div className="text-[11px] muted break-all mt-1">{VAULT_ADDRESS}</div>
+          </div>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-2.5 mt-4">
+          <div className="panel-deep p-3 text-[12.5px]" style={{ color: "#dde5ff" }}>
+            <div className="k mb-1" style={{ color: "var(--accent2)" }}>For your AI agent</div>
+            Use any agent and any wallet — deposit through the ERC-7540 rail with one API call. The agent on this page is one such agent: it drafts, you sign.
+          </div>
+          <div className="panel-deep p-3 text-[12.5px]" style={{ color: "#dde5ff" }}>
+            <div className="k mb-1" style={{ color: "var(--accent2)" }}>For you, manually</div>
+            One-time basic KYC, deposit from $100, withdraw anytime with next-day settlement — at{" "}
+            <a href="https://vaults.ixs.finance/vaults" target="_blank" rel="noopener noreferrer">vaults.ixs.finance</a>.
+          </div>
+        </div>
+      </section>
+
+      {/* Agent + position */}
+      <section className="grid lg:grid-cols-[minmax(0,1fr)_20rem] gap-6 items-start">
+        <AgentChat vaultContext={vaultContext} onConfirmAction={handleAgentAction} canPropose={isConnected} />
+
+        <div className="space-y-3">
+          <div className="panel p-4 space-y-3">
+            <h2 className="h2" style={{ fontSize: 15 }}>Your position</h2>
+            {!isConnected ? (
+              <p className="text-sm muted">Connect a wallet to see your position and let the agent draft deposits.</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                <Stat label={`${sym} balance`} value={assetBalance !== undefined ? formatUnits(assetBalance as bigint, dec) : "—"} />
+                <Stat label="Vault shares" value={shareBalance !== undefined ? formatUnits(shareBalance as bigint, shareDec) : "—"} />
+                <Stat label="Pending deposit" value={pendingDeposit !== undefined ? formatUnits(pendingDeposit as bigint, dec) : "—"} />
+                <Stat label="Claimable deposit" value={claimableDeposit !== undefined ? formatUnits(claimableDeposit as bigint, dec) : "—"} />
+              </div>
+            )}
+          </div>
+
+          {isConnected && (
+            <div className="panel p-4 space-y-3">
+              <h2 className="h2" style={{ fontSize: 15 }}>Direct helpers</h2>
+              <p className="text-xs muted">Same on-chain calls the agent proposes — no need to ask.</p>
+              <div className="flex gap-2">
+                <input className="input" placeholder={`Amount (${sym})`} value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
+                {needsApproval ? (
+                  <button className="btn btn-accent" onClick={() => assetAddress && writeContract(buildApproveTx(VAULT_CONFIG, assetAddress as Address, depositAmount || "0", dec))} disabled={isPending || isConfirming}>Approve</button>
+                ) : (
+                  <button className="btn btn-accent" onClick={() => address && writeContract(buildRequestDepositTx(VAULT_CONFIG, address, depositAmount || "0", dec))} disabled={isPending || isConfirming || !depositAmount}>Deposit</button>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <input className="input" placeholder="Shares to redeem" value={redeemAmount} onChange={(e) => setRedeemAmount(e.target.value)} />
+                <button className="btn" onClick={() => address && writeContract(buildRequestRedeemTx(VAULT_CONFIG, address, redeemAmount || "0", shareDec))} disabled={isPending || isConfirming || !redeemAmount}>Redeem</button>
+              </div>
+              {claimableDeposit !== undefined && (claimableDeposit as bigint) > 0n && (
+                <button className="btn btn-accent w-full" onClick={() => address && writeContract(buildClaimDepositTx(VAULT_CONFIG, address, claimableDeposit as bigint))} disabled={isPending || isConfirming}>
+                  Claim {formatUnits(claimableDeposit as bigint, dec)} {sym} deposit
                 </button>
               )}
+              {txHash && <p className="text-xs muted break-all">Tx: {txHash} {isConfirming ? "(confirming…)" : isConfirmed ? "(confirmed)" : ""}</p>}
+              {writeError && <p className="text-xs down break-all">{writeError.message}</p>}
             </div>
-            {claimableDeposit !== undefined && (claimableDeposit as bigint) > 0n && (
-              <button
-                className="text-sm underline"
-                onClick={handleClaimDeposit}
-                disabled={isPending || isConfirming}
-              >
-                Claim {formatUnits(claimableDeposit as bigint, dec)} {typeof assetSymbol === "string" ? assetSymbol : ""} deposit
-              </button>
-            )}
-          </section>
-
-          <section className="space-y-3 rounded-lg border border-black/10 dark:border-white/10 p-4">
-            <div className="flex items-center gap-2">
-              <h2 className="font-medium">Request redeem</h2>
-              <span className="text-[10px] uppercase tracking-wide rounded-full border border-black/10 dark:border-white/10 px-2 py-0.5 opacity-60">
-                Direct helper
-              </span>
-            </div>
-            <p className="text-xs opacity-60">
-              Same on-chain call the agent can propose in chat, triggered directly — no need to
-              ask.
-            </p>
-            <div className="flex gap-2">
-              <input
-                className="flex-1 rounded border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm"
-                placeholder="Shares"
-                value={redeemAmount}
-                onChange={(e) => setRedeemAmount(e.target.value)}
-              />
-              <button
-                className="rounded border border-black/10 dark:border-white/10 px-4 py-2 text-sm font-medium disabled:opacity-50"
-                onClick={handleRequestRedeem}
-                disabled={isPending || isConfirming || !redeemAmount}
-              >
-                Request redeem
-              </button>
-            </div>
-          </section>
-
-          {txHash && (
-            <p className="text-xs opacity-70 break-all">
-              Tx: {txHash} {isConfirming ? "(confirming…)" : isConfirmed ? "(confirmed)" : ""}
-            </p>
           )}
-          {writeError && (
-            <p className="text-xs text-red-500 break-all">{writeError.message}</p>
-          )}
-        </>
-      )}
-      </div>
 
-      <AgentChat
-        vaultContext={vaultContext}
-        onConfirmAction={handleAgentAction}
-        canPropose={isConnected}
-      />
-      </div>
-    </div>
+          <HowItWorks />
+        </div>
+      </section>
+
+      {/* The rest of the ledger */}
+      <section>
+        <div className="flex items-baseline gap-3 mb-1">
+          <h2 className="h2">Who else will let you in</h2>
+          <span className="text-xs" style={{ color: "var(--accent2)" }}>from the VaultTerms registry</span>
+        </div>
+        <p className="muted text-[13px] mb-5 max-w-[60em]">
+          Every vault below has hand-verified terms. Full minimums, jurisdictions, redemption and fees for all ~100 vaults at{" "}
+          <a href="https://vaultterms.com">vaultterms.com</a>.
+        </p>
+        <OtherVaults onPromo={onPromo} />
+      </section>
+
+      <footer className="text-[12.5px] muted space-y-2 pt-4 border-t" style={{ borderColor: "var(--line)" }}>
+        <p className="max-w-[64em]">
+          <strong className="text-white">This is information, not advice.</strong> Yields are targets or trailing figures — they vary and can be negative. Terms verified against issuer documents; issuers change terms without telling us. The agent drafts transactions; you sign them; verify the vault contract yourself before depositing real funds.
+        </p>
+        <p>
+          Every vault here — including our client IXS&apos;s — is held to the same verified-terms standard. · Data: VaultTerms registry + CoinMarketCap Real-World Assets API · vault execution via @ixswap1/vault-agent-sdk · #BuildwithCMC
+        </p>
+      </footer>
+    </main>
   );
 }

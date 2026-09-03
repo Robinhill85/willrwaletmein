@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ProposedVaultAction } from "@ixswap1/vault-agent-sdk";
 
 export type ProposedAction = ProposedVaultAction;
@@ -10,6 +10,7 @@ interface ChatMessage {
   content: string;
   action?: ProposedAction;
   actionStatus?: "pending" | "sent";
+  sources?: string[];
 }
 
 const ACTION_LABEL: Record<ProposedAction["action"], string> = {
@@ -19,6 +20,14 @@ const ACTION_LABEL: Record<ProposedAction["action"], string> = {
   claimDeposit: "Claim deposit",
   claimRedeem: "Claim redeem",
 };
+
+const SUGGESTIONS = [
+  "I'm in the EU with $1,000 and I'll do basic KYC — which vaults will let me in?",
+  "What actually backs the IXS vault, and what's the catch?",
+  "Is tokenized NVDA trading at a premium to the real stock right now?",
+  "Which issuers tokenize gold, and how big is each?",
+  "Deposit 100 USDC into the IXS vault",
+];
 
 export function AgentChat({
   vaultContext,
@@ -33,11 +42,16 @@ export function AgentChat({
     {
       role: "assistant",
       content:
-        "I'm the vault agent. Ask me about this vault, or tell me what you want to do — e.g. \"deposit 500 USDC\" — and I'll prepare it for you to confirm in your wallet. I can't sign anything myself.",
+        "I'm your agent. Ask me which real-world-asset vaults will actually let you in, what backs them, or what a tokenized asset is worth right now — or tell me what to do in the IXS vault (\"deposit 100 USDC\") and I'll draft it for your wallet to sign. I never hold keys.",
     },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+  }, [messages, isLoading]);
 
   function toHistory(msgs: ChatMessage[]) {
     return msgs.map((m) => ({
@@ -50,40 +64,29 @@ export function AgentChat({
     }));
   }
 
-  async function send() {
-    const text = input.trim();
+  async function send(preset?: string) {
+    const text = (preset ?? input).trim();
     if (!text || isLoading) return;
-
-    const nextMessages: ChatMessage[] = [...messages, { role: "user", content: text }];
-    setMessages(nextMessages);
+    const next: ChatMessage[] = [...messages, { role: "user", content: text }];
+    setMessages(next);
     setInput("");
     setIsLoading(true);
-
     try {
       const res = await fetch("/api/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: toHistory(nextMessages), vaultContext }),
+        body: JSON.stringify({ messages: toHistory(next), vaultContext }),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error ?? `Agent request failed (${res.status})`);
-
       setMessages((prev) => [
         ...prev,
-        {
-          role: "assistant",
-          content: data.text ?? "",
-          action: data.action ?? undefined,
-        },
+        { role: "assistant", content: data.text ?? "", action: data.action ?? undefined, sources: data.sources ?? [] },
       ]);
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        {
-          role: "assistant",
-          content: `Error: ${err instanceof Error ? err.message : "request failed"}`,
-        },
+        { role: "assistant", content: `Something went wrong: ${err instanceof Error ? err.message : "request failed"}. Try again.` },
       ]);
     } finally {
       setIsLoading(false);
@@ -92,88 +95,73 @@ export function AgentChat({
 
   function confirm(index: number, action: ProposedAction) {
     onConfirmAction(action);
-    setMessages((prev) => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], actionStatus: "sent" };
-      return updated;
-    });
+    setMessages((prev) => prev.map((m, i) => (i === index ? { ...m, actionStatus: "sent" } : m)));
   }
-
   function dismiss(index: number) {
-    setMessages((prev) => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], action: undefined };
-      return updated;
-    });
+    setMessages((prev) => prev.map((m, i) => (i === index ? { ...m, action: undefined } : m)));
   }
 
   return (
-    <div className="flex flex-col rounded-lg border border-black/10 dark:border-white/10 h-[32rem]">
-      <div className="px-4 py-3 border-b border-black/10 dark:border-white/10">
-        <h2 className="font-medium text-sm">Vault agent</h2>
-        <p className="text-xs opacity-60">
-          Can propose transactions — your wallet always signs, never the agent.
-        </p>
+    <div className="panel flex flex-col" style={{ minHeight: "36rem" }}>
+      <div className="px-4 py-3 border-b" style={{ borderColor: "var(--line)" }}>
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 className="h2" style={{ fontSize: 16 }}>Your agent</h2>
+          <span className="k">reads · answers · drafts — your wallet signs</span>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 text-sm">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 text-sm" style={{ maxHeight: "34rem" }}>
         {messages.map((m, i) => (
           <div key={i} className={m.role === "user" ? "text-right" : "text-left"}>
             {m.content && (
-              <div
-                className={`inline-block max-w-[85%] rounded-lg px-3 py-2 whitespace-pre-wrap text-left ${
-                  m.role === "user"
-                    ? "bg-foreground text-background"
-                    : "bg-black/5 dark:bg-white/10"
-                }`}
-              >
+              <div className={`inline-block max-w-[88%] whitespace-pre-wrap text-left ${m.role === "user" ? "bubble-user" : "bubble-agent"}`}>
                 {m.content}
               </div>
             )}
-
+            {m.sources && m.sources.length > 0 && (
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {m.sources.map((s) => (
+                  <span key={s} className="source">{s}</span>
+                ))}
+              </div>
+            )}
             {m.action && (
-              <div className="mt-2 text-left inline-block w-full max-w-[85%] rounded-lg border border-black/10 dark:border-white/10 p-3 space-y-2">
-                <div className="text-xs uppercase tracking-wide opacity-60">Proposed action</div>
-                <div className="font-medium">
-                  {ACTION_LABEL[m.action.action]}
-                  {m.action.amount ? ` — ${m.action.amount}` : ""}
+              <div className="mt-2 text-left inline-block w-full max-w-[88%] panel-deep p-3 space-y-2" style={{ borderColor: "var(--accent)" }}>
+                <div className="k" style={{ color: "var(--accent)" }}>Proposed action — you sign</div>
+                <div className="font-semibold">
+                  {ACTION_LABEL[m.action.action]}{m.action.amount ? ` — ${m.action.amount}` : ""}
                 </div>
-                <div className="text-xs opacity-70">{m.action.reasoning}</div>
+                <div className="text-xs muted">{m.action.reasoning}</div>
                 {m.actionStatus === "sent" ? (
-                  <p className="text-xs opacity-60">
-                    Sent to your wallet — check the status below the dashboard.
-                  </p>
+                  <p className="text-xs muted">Sent to your wallet — watch the transaction status below.</p>
                 ) : (
                   <div className="flex gap-2 pt-1">
-                    <button
-                      className="rounded bg-foreground text-background px-3 py-1.5 text-xs font-medium disabled:opacity-50"
-                      onClick={() => confirm(i, m.action!)}
-                      disabled={!canPropose}
-                    >
+                    <button className="btn btn-accent" onClick={() => confirm(i, m.action!)} disabled={!canPropose}>
                       Confirm in wallet
                     </button>
-                    <button
-                      className="rounded border border-black/10 dark:border-white/10 px-3 py-1.5 text-xs font-medium"
-                      onClick={() => dismiss(i)}
-                    >
-                      Dismiss
-                    </button>
+                    <button className="btn" onClick={() => dismiss(i)}>Dismiss</button>
                   </div>
                 )}
-                {!canPropose && (
-                  <p className="text-xs text-red-500">Connect a wallet to confirm this.</p>
-                )}
+                {!canPropose && <p className="text-xs down">Connect a wallet to confirm this.</p>}
               </div>
             )}
           </div>
         ))}
-        {isLoading && <div className="text-xs opacity-50">Thinking…</div>}
+        {isLoading && <div className="text-xs muted">Checking the ledger and live data…</div>}
       </div>
 
-      <div className="p-3 border-t border-black/10 dark:border-white/10 flex gap-2">
+      {messages.length <= 1 && (
+        <div className="px-4 pb-2 flex flex-wrap gap-1.5">
+          {SUGGESTIONS.map((s) => (
+            <button key={s} className="chip" onClick={() => send(s)} disabled={isLoading}>{s}</button>
+          ))}
+        </div>
+      )}
+
+      <div className="p-3 border-t flex gap-2" style={{ borderColor: "var(--line)" }}>
         <input
-          className="flex-1 rounded border border-black/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm"
-          placeholder="Ask, or tell me what to do…"
+          className="input"
+          placeholder="Ask about any vault, or tell me what to do…"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
@@ -184,11 +172,7 @@ export function AgentChat({
           }}
           disabled={isLoading}
         />
-        <button
-          className="rounded bg-foreground text-background px-4 py-2 text-sm font-medium disabled:opacity-50"
-          onClick={send}
-          disabled={isLoading || !input.trim()}
-        >
+        <button className="btn btn-accent" onClick={() => send()} disabled={isLoading || !input.trim()}>
           Send
         </button>
       </div>

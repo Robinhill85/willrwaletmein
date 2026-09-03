@@ -13,28 +13,18 @@ const connectors = connectorsForWallets(
   [
     {
       groupName: "Recommended",
-      wallets: [
-        metaMaskWallet,
-        rainbowWallet,
-        coinbaseWallet,
-        walletConnectWallet,
-        injectedWallet,
-      ],
+      wallets: [metaMaskWallet, rainbowWallet, coinbaseWallet, walletConnectWallet, injectedWallet],
     },
   ],
   {
-    appName: "IXS Vault Agent",
-    projectId:
-      process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ??
-      "REPLACE_WITH_WALLETCONNECT_PROJECT_ID",
+    appName: "Will RWA let me in?",
+    projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "REPLACE_WITH_WALLETCONNECT_PROJECT_ID",
   },
 );
 
 export const wagmiConfig = createConfig({
   connectors,
   chains: [avalanche],
-  transports: {
-    [avalanche.id]: http(),
-  },
+  transports: { [avalanche.id]: http() },
   ssr: true,
 });
