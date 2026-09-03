@@ -196,7 +196,10 @@ export default function Home() {
           </div>
           <div className="md:text-right">
             <div className="fig">7% <small>target · ~5% trailing</small></div>
-            <div className="text-xs muted mt-0.5">TVL {tvl != null ? fmtUsd(tvl) : "…"} <span style={{ color: "var(--accent2)" }}>live onchain</span> · $100 min</div>
+            <div className="text-xs muted mt-0.5">
+              {tvl == null ? "TVL …" : tvl === 0 ? "Launching — first deposits open" : `TVL ${fmtUsd(tvl)}`}{" "}
+              <span style={{ color: "var(--accent2)" }}>live onchain</span> · $100 min
+            </div>
             <div className="text-[11px] muted break-all mt-1">{VAULT_ADDRESS}</div>
           </div>
         </div>
