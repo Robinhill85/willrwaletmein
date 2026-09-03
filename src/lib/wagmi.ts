@@ -12,7 +12,7 @@ import { avalanche } from "wagmi/chains";
 const connectors = connectorsForWallets(
   [
     {
-      groupName: "Recommended",
+      groupName: "Wallets",
       wallets: [metaMaskWallet, rainbowWallet, coinbaseWallet, walletConnectWallet, injectedWallet],
     },
   ],
