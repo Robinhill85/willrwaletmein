@@ -48,6 +48,12 @@ export function AgentChat({
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [retryMessages, setRetryMessages] = useState<ChatMessage[] | null>(null);
+  const inFlight = useRef(false);
+  const requestRef = useRef<AbortController | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  useEffect(() => () => requestRef.current?.abort(), []);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -65,31 +71,45 @@ export function AgentChat({
     }));
   }
 
-  async function send(preset?: string) {
+  async function send(preset?: string, retry?: ChatMessage[]) {
     const text = (preset ?? input).trim();
-    if (!text || isLoading) return;
-    const next: ChatMessage[] = [...messages, { role: "user", content: text }];
+    if ((!text && !retry) || inFlight.current) return;
+    inFlight.current = true;
+    const next: ChatMessage[] = retry ?? [...messages, { role: "user", content: text }];
     setMessages(next);
-    setInput("");
+    if (!retry) setInput("");
+    setError(null);
+    setRetryMessages(null);
+    const controller = new AbortController();
+    requestRef.current = controller;
+    const timeout = setTimeout(() => controller.abort(), 55_000);
     setIsLoading(true);
     try {
       const res = await fetch("/api/agent", {
         method: "POST",
+        signal: controller.signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: toHistory(next), vaultContext }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error ?? `Agent request failed (${res.status})`);
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data) throw new Error(data?.error ?? "The agent is temporarily unavailable.");
+      if (data.recoverable) {
+        setError("Some ledger or CMC data could not be fetched. You can retry this question.");
+        setRetryMessages(next);
+      }
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: data.text ?? "", actions: data.actions?.length ? data.actions : data.action ? [data.action] : undefined, sources: data.sources ?? [] },
       ]);
     } catch (err) {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: `Something went wrong: ${err instanceof Error ? err.message : "request failed"}. Try again.` },
-      ]);
+      setError(controller.signal.aborted
+        ? "The agent took too long to reply. Your question is saved. Please retry."
+        : err instanceof Error ? `${err.message} Your question is saved; you can retry.` : "The agent is unavailable. Your question is saved; please retry.");
+      setRetryMessages(next);
     } finally {
+      clearTimeout(timeout);
+      requestRef.current = null;
+      inFlight.current = false;
       setIsLoading(false);
     }
   }
@@ -111,7 +131,8 @@ export function AgentChat({
         </div>
       </div>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 text-sm" style={{ maxHeight: "34rem" }}>
+      <button className="btn transcript-toggle m-3 self-start" aria-expanded={expanded} aria-controls="chat-transcript" onClick={() => setExpanded(!expanded)}>{expanded ? "Compact transcript" : "Expand transcript"}</button>
+      <div id="chat-transcript" ref={scrollRef} role="log" aria-label="Chat transcript" aria-live="polite" aria-busy={isLoading} className={`chat-transcript flex-1 p-4 space-y-3 text-sm ${expanded ? "expanded" : ""}`}>
         {messages.map((m, i) => (
           <div key={i} className={m.role === "user" ? "text-right" : "text-left"}>
             {m.content && (
@@ -148,7 +169,7 @@ export function AgentChat({
             ))}
           </div>
         ))}
-        {isLoading && <div className="text-xs muted">Checking the ledger and live data…</div>}
+
       </div>
 
       {messages.length <= 1 && (
@@ -159,21 +180,23 @@ export function AgentChat({
         </div>
       )}
 
-      <div className="p-3 border-t flex gap-2" style={{ borderColor: "var(--line)" }}>
+      {isLoading && <div className="px-4 pb-3 text-sm muted flex items-center gap-2" role="status"><span className="spinner" aria-hidden="true" />Checking the ledger and market data. This can take up to 55 seconds…</div>}
+      {error && <div className="px-4 pb-3 text-sm" role="alert"><p>{error}</p><button className="btn mt-2" disabled={isLoading} onClick={() => retryMessages && send(undefined, retryMessages)}>Retry question</button></div>}
+      <div className="chat-composer p-3 border-t flex gap-2" style={{ borderColor: "var(--line)" }}>
         <input
           className="input"
+          aria-label="Message your agent"
           placeholder="Ask about any vault, or tell me what to do…"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
+            if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
               e.preventDefault();
               send();
             }
           }}
-          disabled={isLoading}
         />
-        <button className="btn btn-accent" onClick={() => send()} disabled={isLoading || !input.trim()}>
+        <button className="btn btn-accent" onClick={() => send()} disabled={isLoading}>
           Send
         </button>
       </div>

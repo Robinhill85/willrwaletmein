@@ -3,6 +3,7 @@
 //  - CoinMarketCap RWA endpoints (live tokenized-asset market data, issuers)
 // Each tool returns a string for the model plus a source label for the UI.
 
+import { IXS_VAULT_NAME } from "./data-status";
 import type Anthropic from "@anthropic-ai/sdk";
 import { compact, rwaInfo, rwaIssuers, rwaList, rwaQuotes, type CmcCall, type RwaAssetType, CmcError } from "./cmc";
 import { eligible, loadRegistry, summarize, type EligibilityQuery } from "./registry";
@@ -69,6 +70,7 @@ export const AGENT_TOOLS: Anthropic.Tool[] = [
 
 export interface ToolRun {
   result: string;
+  recoverable?: boolean;
   source: string; // shown in the UI as evidence of where the answer came from
 }
 
@@ -94,7 +96,7 @@ export async function runTool(name: string, input: Record<string, unknown>, cmcL
       const vaults = await loadRegistry();
       const v = vaults.find((x) => x.id === input.id);
       if (!v) return { result: `No vault with id ${String(input.id)}`, source: "VaultTerms registry" };
-      return { result: compact(v, 9000), source: `VaultTerms registry · ${v.name}` };
+      return { result: compact({ ...v, ...summarize(v) }, 9000), source: `VaultTerms registry · ${v.id === "ixs-blackrock-hy-bond" ? IXS_VAULT_NAME : v.name}` };
     }
     case "cmc_rwa_lookup": {
       try {
@@ -113,7 +115,7 @@ export async function runTool(name: string, input: Record<string, unknown>, cmcL
         );
         return { result: compact(list), source: "CMC RWA API · /v5/real-world-assets/assets/list" };
       } catch (e) {
-        return { result: cmcErr(e), source: "CMC RWA API · error" };
+        return { result: cmcErr(e), source: "CMC · UNAVAILABLE", recoverable: true };
       }
     }
     case "cmc_rwa_issuers": {
@@ -124,7 +126,7 @@ export async function runTool(name: string, input: Record<string, unknown>, cmcL
           source: `CMC RWA API · /v5/real-world-assets/issuers${input.issuer_id ? "" : "/list"}`,
         };
       } catch (e) {
-        return { result: cmcErr(e), source: "CMC RWA API · error" };
+        return { result: cmcErr(e), source: "CMC · UNAVAILABLE", recoverable: true };
       }
     }
     default:

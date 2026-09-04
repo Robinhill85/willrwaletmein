@@ -6,12 +6,12 @@ import type { CmcCall } from "@/lib/cmc";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const client = new Anthropic();
+const client = new Anthropic({ timeout: 20_000, maxRetries: 0 });
 
-const SYSTEM_PROMPT = `You are the agent on willrwaletmein.com — "Will RWA let me in?". You help a person (or another agent) find real-world-asset yield they can actually access, and you operate the IXS High Yield Corporate Bond vault ("ix7540v1", ERC-7540, Avalanche C-Chain) for the connected wallet.
+const SYSTEM_PROMPT = `You are the agent on willrwaletmein.com — "Will RWA let me in?". You help a person (or another agent) find real-world-asset yield they can actually access, and you operate the IXS High Yield Corporate Bond Vault ("ix7540v1", ERC-7540, Avalanche C-Chain) for the connected wallet.
 
 You have three kinds of tools:
-1. VaultTerms registry (vault_ledger_search, vault_terms): hand-verified terms for ~26 RWA vaults — who is admitted (US/EU/rest of world), minimums, KYC tier, redemption, fees, risks, where to invest. This is the source of truth for eligibility and terms.
+1. VaultTerms registry (vault_ledger_search, vault_terms): hand-verified terms for the verified registry entries: who is admitted (US/EU/rest of world), minimums, KYC tier, redemption, fees, risks, where to invest. Use the tool result count. Tracked entries on VaultTerms have market data only; total means verified plus tracked. The verified registry is the source of truth for eligibility and terms.
 2. CoinMarketCap Real-World Assets API (cmc_rwa_lookup, cmc_rwa_issuers): live tokenized-asset market data — tokenized price and market cap, underlying on-chain tokens, TradFi venues, and the issuer graph. Use it for "what is tokenized X worth", premium/discount vs TradFi, category sizing, and "who issues this".
 3. propose_vault_action (IXS vault): drafts approve / requestDeposit / requestRedeem / claimDeposit / claimRedeem for the connected wallet to sign. You never sign or submit; the app renders your proposal as a confirm card.
 
@@ -19,7 +19,7 @@ How to answer:
 - Eligibility questions: call vault_ledger_search with the person's region, budget and KYC tolerance; answer with the specific vaults, their minimums and KYC tier, and name the trade-offs. Group by access: agent-addressable / basic KYC / no KYC. No-KYC vaults are crypto-native yield (lending books, carry trades) — say so plainly; regulated fund wrappers sit behind KYC.
 - Market questions about a tokenized asset: call cmc_rwa_lookup. Quote the numbers with the endpoint's timestamp. If the CMC figure cannot be fetched, say so and answer from the registry.
 - The IXS vault: it is agent-first. Deposits by an agent (including you, on behalf of the connected user) are permissionless — no KYC, no whitelist. A human wanting the manual route uses the permissioned vault with basic KYC at vaults.ixs.finance. When the user clearly instructs an action (deposit 100, redeem, claim), call propose_vault_action; for hypotheticals, do not. If no wallet is connected, ask them to connect first. Deposits are async: request → operator fulfils → claim.
-- Yields are targets or trailing figures, never guarantees; the IXS vault's estimated yield is 6%/yr (about 5% trailing over 12 months) with a junk-bond-ETF underlying (SHYG) whose NAV can fall. The $IXS Vault Rewards program (deposits 4 to 18 September 2026, 500,000 $IXS pool, first come first served) is a fixed reward paid in $IXS 90 days after deposit, separate from the vault yield; always take tiers and dates from the vault_terms tool, never from memory. Say this once when relevant, not as boilerplate.
+- Yields are targets or trailing figures, never guarantees; fetch the IXS vault's current target and trailing yields with vault_terms, including the verification date. Its junk-bond-ETF underlying (SHYG) has a NAV that can fall. The $IXS Vault Rewards program (deposits 4 to 18 September 2026, 500,000 $IXS pool, first come first served) is a fixed reward paid in $IXS 90 days after deposit, separate from the vault yield; always take tiers and dates from the vault_terms tool, never from memory. Say this once when relevant, not as boilerplate.
 - Be direct and specific: numbers, names, minimums. No "consult an advisor" filler. Flag real risks plainly. If a value is missing, say what is missing rather than guessing.
 - Disclosure when relevant: the site is built by IXS's growth partner; the registry holds IXS to the same verified-terms standard as every other vault.
 
@@ -29,6 +29,7 @@ How to write:
 - No bold-label headers ("**Money terms**", "**Risks worth flagging plainly**"). Use a bullet list only for real lists: tiers, steps, a set of vaults. One idea per bullet.
 - Never expose internals: no tool names, JSON keys, field names, contract nicknames or code formatting. Say "no wallet is connected", not "connectedWallet: null". Say "the IXS vault", not "ix7540v1". Call the steps "the approval", "the deposit request" and "the claim", never requestDeposit / claimDeposit / approve as words.
 - No filler ("worth flagging", "worth knowing", "it's important to note", "as an AI", "here's the flow"). No hedging stacks. Say the risk once, plainly.
+- For TVL and yield, distinguish LIVE, ZERO, UNAVAILABLE and STALE using source timestamps. Zero is a measured value, not a failed read. A target yield is an estimate, not a live realized return. Cite the source and last update when available. Never treat missing data as zero.
 - Numbers with units and dates. Lead with the answer, then the detail.`;
 
 interface ChatMessage {
@@ -39,11 +40,13 @@ interface ChatMessage {
 const MAX_TURNS = 6;
 
 export async function POST(req: Request) {
-  const { messages, vaultContext } = (await req.json()) as {
+  const body = await req.json().catch(() => null);
+  if (!body) return Response.json({ error: "Invalid request" }, { status: 400 });
+  const { messages, vaultContext } = body as {
     messages: ChatMessage[];
     vaultContext: Record<string, unknown>;
   };
-  if (!Array.isArray(messages) || messages.length === 0) {
+  if (!Array.isArray(messages) || messages.length === 0 || messages.some(m => !m || !["user", "assistant"].includes(m.role) || typeof m.content !== "string")) {
     return Response.json({ error: "messages required" }, { status: 400 });
   }
 
@@ -55,6 +58,8 @@ export async function POST(req: Request) {
   const convo: Anthropic.MessageParam[] = messages.slice(-16).map((m) => ({ role: m.role, content: m.content }));
   const cmcLog: CmcCall[] = [];
   const sources: string[] = [];
+  let recoverable = false;
+  const signal = AbortSignal.any([req.signal, AbortSignal.timeout(50_000)]);
   let text = "";
   type Proposed = { action: string; amount?: string; reasoning: string };
   const actions: Proposed[] = [];
@@ -67,11 +72,11 @@ export async function POST(req: Request) {
       output_config: { effort: "medium" },
       system: [
         { type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } },
-        { type: "text", text: `Current on-chain IXS vault state (live):\n${JSON.stringify(vaultContext, null, 2)}` },
+        { type: "text", text: `Current IXS vault context (check timestamps and read failures before calling data live):\n${JSON.stringify(vaultContext, null, 2)}` },
       ],
       tools,
       messages: convo,
-    });
+    }, { signal });
 
     const toolResults: Anthropic.ToolResultBlockParam[] = [];
     for (const block of response.content) {
@@ -82,7 +87,12 @@ export async function POST(req: Request) {
           actions.push(block.input as Proposed);
           toolResults.push({ type: "tool_result", tool_use_id: block.id, content: "Proposal shown to the user as a confirm card." });
         } else {
-          const run = await runTool(block.name, (block.input ?? {}) as Record<string, unknown>, cmcLog);
+          signal.throwIfAborted();
+          const run = await runTool(block.name, (block.input ?? {}) as Record<string, unknown>, cmcLog).catch(() => ({
+            source: "VaultTerms · UNAVAILABLE", recoverable: true,
+            result: "The requested data is unavailable. Tell the user they can retry. Do not invent missing figures or terms.",
+          }));
+          recoverable ||= !!run.recoverable;
           sources.push(run.source);
           toolResults.push({ type: "tool_result", tool_use_id: block.id, content: run.result });
         }
@@ -96,9 +106,8 @@ export async function POST(req: Request) {
     if (turn < MAX_TURNS - 1) text = "";
   }
 
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : "agent failed";
-    return Response.json({ error: `Agent error: ${msg}` }, { status: 502 });
+  } catch {
+    return Response.json({ error: signal.aborted ? "The agent timed out. Please retry." : "The agent is temporarily unavailable. Please retry." }, { status: signal.aborted ? 504 : 502 });
   }
 
   const clean = text
@@ -108,7 +117,8 @@ export async function POST(req: Request) {
     .trim();
 
   return Response.json({
-    text: clean,
+    text: clean || (actions.length ? "" : "I couldn’t finish checking the data. Please retry your question."),
+    recoverable: recoverable || (!clean && !actions.length),
     action: actions[0] ?? null,
     actions,
     sources: Array.from(new Set(sources)),

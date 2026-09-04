@@ -62,6 +62,7 @@ export async function cmcGet<T = unknown>(
     headers: { "X-CMC_PRO_API_KEY": key, Accept: "application/json" },
     // Route handlers should not let Next cache upstream market data.
     cache: "no-store",
+    signal: AbortSignal.timeout(8_000),
   });
   const body = (await res.json().catch(() => ({}))) as {
     status?: { error_code?: number; error_message?: string; credit_count?: number };

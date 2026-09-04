@@ -11,11 +11,11 @@
   --line: rgba(255, 255, 255, 0.14);
   --grid: rgba(255, 255, 255, 0.07);
   --text: #eef2ff;
-  --muted: #a9b8f2;
+  --muted: #f5f8ff;
   --accent: #ffb224;
-  --accent2: #9db4ff;
+  --accent2: #f5f8ff;
   --up: #5be39a;
-  --down: #ff6b6b;
+  --down: #ffb3b3;
   --background: var(--bg-mid);
   --foreground: var(--text);
 }
@@ -76,7 +76,7 @@ a { color: #fff; }
 .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .input { width: 100%; font: inherit; font-size: 14px; color: var(--text); padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-deep); }
-.input::placeholder { color: rgba(169,184,242,.7); }
+.input::placeholder { color: var(--muted); }
 .input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 .chip { font-size: 12px; border: 1px solid var(--line); background: var(--panel-deep); color: var(--text); padding: 5px 10px; border-radius: 999px; cursor: pointer; }
@@ -100,3 +100,25 @@ a { color: #fff; }
 
 /* RainbowKit button blends with the panel look */
 [data-rk] button { font-family: inherit; }
+
+/* Keep the existing palette and panels; remove competing mobile scroll areas. */
+.data-metric + .data-metric { margin-top: 12px; }
+.data-metric .fig { font-size: 17px; overflow-wrap: anywhere; }
+.chat-transcript { max-height: 34rem; overflow-y: auto; overscroll-behavior: contain; }
+.chat-transcript.expanded { max-height: none; overflow: visible; }
+.bubble-agent, .bubble-user { overflow-wrap: anywhere; }
+.chat-composer .input { min-width: 0; }
+:where(a, button, summary):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.spinner { width: 16px; height: 16px; flex-shrink: 0; border: 2px solid var(--muted); border-right-color: transparent; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+@media (max-width: 639px) {
+  header { flex-wrap: wrap; }
+  .chat-transcript { max-height: none; overflow: visible; }
+  .transcript-toggle { display: none; }
+  .chat-composer { position: sticky; bottom: 0; background: #111f72; padding-bottom: max(12px, env(safe-area-inset-bottom)); border-radius: 0 0 14px 14px; }
+  .chat-composer .input { font-size: 16px; }
+}
+
+/* Softer text remains readable on the dark panels; bare blue needs a lighter tint. */
+.panel, .panel-deep { --muted: #d8e1ff; --accent2: #d0ddff; }

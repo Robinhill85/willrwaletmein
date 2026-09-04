@@ -1,7 +1,7 @@
 "use client";
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatUnits, parseUnits, type Address } from "viem";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
@@ -18,14 +18,14 @@ import {
 } from "@ixswap1/vault-agent-sdk";
 import { AgentChat, type ProposedAction } from "@/components/AgentChat";
 import { OtherVaults } from "@/components/OtherVaults";
+import { DataMetric } from "@/components/DataMetric";
+import { formatTvlUsd, IXS_VAULT_NAME, ONCHAIN_MAX_AGE, TERMS_MAX_AGE } from "@/lib/data-status";
+import { activePromo } from "@/lib/registry";
+import { useVaultRegistry, PUBLIC_REGISTRY_URL } from "@/lib/use-vault-registry";
 import { HowItWorks } from "@/components/HowItWorks";
 
 const VAULT_CONFIG = KNOWN_VAULTS["avax-ixhyb"];
 const VAULT_ADDRESS = VAULT_CONFIG.address;
-
-function fmtUsd(n: number) {
-  return n >= 1e6 ? `$${(n / 1e6).toFixed(2)}M` : `$${Math.round(n).toLocaleString("en-US")}`;
-}
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
@@ -40,15 +40,17 @@ export default function Home() {
   const { address, isConnected } = useAccount();
   const [depositAmount, setDepositAmount] = useState("");
   const [redeemAmount, setRedeemAmount] = useState("");
-  const [promoBadge, setPromoBadge] = useState<string | null>(null);
-  const onPromo = useCallback((b: string | null) => setPromoBadge(b), []);
+  const registry = useVaultRegistry();
+  const ixs = registry.data?.find(v => v.id === "ixs-blackrock-hy-bond");
+  const promoBadge = ixs && !registry.isError ? activePromo(ixs)?.badge : null;
 
   const vault = { address: VAULT_ADDRESS, abi: vaultAbi } as const;
 
   const { data: name } = useReadContract({ ...vault, functionName: "name" });
   const { data: symbol } = useReadContract({ ...vault, functionName: "symbol" });
   const { data: decimals } = useReadContract({ ...vault, functionName: "decimals" });
-  const { data: totalAssets } = useReadContract({ ...vault, functionName: "totalAssets" });
+  const assetsRead = useReadContract({ ...vault, functionName: "totalAssets", query: { refetchInterval: 30_000 } });
+  const { data: totalAssets } = assetsRead;
   const { data: totalSupply } = useReadContract({ ...vault, functionName: "totalSupply" });
   const { data: assetAddress } = useReadContract({ ...vault, functionName: "asset" });
 
@@ -102,13 +104,16 @@ export default function Home() {
   const dec = typeof assetDecimals === "number" ? assetDecimals : 18;
   const shareDec = typeof decimals === "number" ? decimals : 18;
   const sym = typeof assetSymbol === "string" ? assetSymbol : "USDC";
-  const tvl = totalAssets !== undefined ? Number(formatUnits(totalAssets as bigint, dec)) : null;
+  const tvl = totalAssets !== undefined && typeof assetDecimals === "number" ? Number(formatUnits(totalAssets as bigint, dec)) : null;
 
   const vaultContext = {
     vaultAddress: VAULT_ADDRESS,
     chain: "Avalanche C-Chain",
     standard: "ERC-7540 async vault",
-    vaultName: typeof name === "string" ? name : null,
+    vaultName: IXS_VAULT_NAME,
+    onchainName: typeof name === "string" ? name : null,
+    totalAssetsUpdatedAt: assetsRead.dataUpdatedAt || null,
+    totalAssetsReadFailed: assetsRead.isError,
     vaultSymbol: typeof symbol === "string" ? symbol : null,
     assetAddress: assetAddress ?? null,
     assetSymbol: sym,
@@ -168,7 +173,7 @@ export default function Home() {
             <strong className="text-white">RWA yield is paid by the other economy:</strong> T-bill coupons, bond interest, insurance premiums, real loan repayments — cash flows that arrive whether crypto pumps or not, settled to your wallet onchain.
           </p>
           <p className="mt-3 muted text-sm">
-            So — will RWA let <em>you</em> in? Ask the agent. It reads the verified terms of ~26 vaults and live CoinMarketCap RWA data, and it can deposit into the IXS vault for you.
+            So — will RWA let <em>you</em> in? Ask the agent. It reads the verified VaultTerms ledger and live CoinMarketCap RWA data, and it can deposit into the IXS vault for you.
           </p>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -180,9 +185,9 @@ export default function Home() {
         <div className="flex items-baseline gap-3 mb-1">
           <span className="eyebrow">New — the first agent-first RWA vault</span>
         </div>
-        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_18rem] md:items-center">
           <div>
-            <div className="font-bold text-lg">{typeof name === "string" ? name : "IXS High Yield Corporate Bond Vault"} <span className="muted font-normal text-sm">· Avalanche · ERC-7540</span></div>
+            <div className="font-bold text-lg">{IXS_VAULT_NAME} <span className="muted font-normal text-sm">· Avalanche · ERC-7540</span></div>
             <div className="text-[13.5px] mt-1" style={{ color: "#dde5ff" }}>
               USDC vault deployed via OpenTrade into the iShares 0–5 Year High Yield Corporate Bond ETF (SHYG). Real bond coupons, daily accrual, next-day exits.
             </div>
@@ -195,12 +200,11 @@ export default function Home() {
             </div>
           </div>
           <div className="md:text-right">
-            <div className="fig">6% <small>estimated · ~5% trailing</small></div>
-            <div className="text-xs muted mt-0.5">
-              {tvl == null ? "TVL …" : tvl === 0 ? "Launching — first deposits open" : `TVL ${fmtUsd(tvl)}`}{" "}
-              <span style={{ color: "var(--accent2)" }}>live onchain</span> · $100 min
-            </div>
-            <div className="text-[11px] muted break-all mt-1">{VAULT_ADDRESS}</div>
+            <DataMetric label="Yield" value={ixs?.yield_profile?.target_pct} formatted={`${ixs?.yield_profile?.target_pct}%`} kind="estimated target · not guaranteed" source="VaultTerms" sourceUrl={PUBLIC_REGISTRY_URL} updatedAt={ixs?.verified_at} maxAge={TERMS_MAX_AGE} failed={registry.isError} loading={registry.isPending} />
+            <DataMetric label="TVL" value={tvl} formatted={tvl == null ? undefined : formatTvlUsd(tvl)} source="onchain · Avalanche" sourceUrl={`https://snowtrace.io/address/${VAULT_ADDRESS}`} updatedAt={assetsRead.dataUpdatedAt} maxAge={ONCHAIN_MAX_AGE} failed={assetsRead.isError} loading={assetsRead.isPending} />
+            <div className="text-xs muted mt-1">$100 min</div>
+            {(registry.isError || assetsRead.isError) && <button className="btn mt-2" onClick={() => { registry.refetch(); assetsRead.refetch(); }} disabled={registry.isFetching || assetsRead.isFetching}>Retry data</button>}
+            <div className="text-[10px] font-mono muted break-all mt-1">{VAULT_ADDRESS}</div>
           </div>
         </div>
         <div className="grid sm:grid-cols-2 gap-2.5 mt-4">
@@ -211,7 +215,7 @@ export default function Home() {
           <div className="panel-deep p-3 text-[12.5px]" style={{ color: "#dde5ff" }}>
             <div className="k mb-1" style={{ color: "var(--accent2)" }}>For you, manually</div>
             One-time basic KYC, deposit from $100, withdraw anytime with next-day settlement — at{" "}
-            <a href="https://vaults.ixs.finance/vaults" target="_blank" rel="noopener noreferrer">vaults.ixs.finance</a>.
+            <a href="https://vaults.ixs.finance/vaults" target="_blank" rel="noopener noreferrer">Open on IXS ↗</a>.
           </div>
         </div>
       </section>
@@ -272,12 +276,24 @@ export default function Home() {
           <span className="text-xs" style={{ color: "var(--accent2)" }}>from the VaultTerms registry</span>
         </div>
         <p className="muted text-[13px] mb-5 max-w-[60em]">
-          Every vault below has hand-verified terms. Full minimums, jurisdictions, redemption and fees for all ~100 vaults at{" "}
+          Every vault below has hand-verified terms. See the full verified ledger and the separate market-data-only tracked list at{" "}
           <a href="https://vaultterms.com">vaultterms.com</a>.
         </p>
-        <OtherVaults onPromo={onPromo} />
+        <OtherVaults />
       </section>
 
+      <section className="panel p-4 text-sm" aria-label="Glossary">
+        <details><summary className="font-semibold cursor-pointer">Quick glossary</summary>
+          <p className="mt-3 muted">LIVE means the source is recent; ZERO means it reported zero. STALE means freshness is unconfirmed; UNAVAILABLE means no usable value. A current target yield is still an estimate.</p>
+          <dl className="mt-3 space-y-2 muted">
+            <div><dt className="text-white">RWA</dt><dd>Real-world assets: bonds, property, loans and other assets represented onchain.</dd></div>
+            <div><dt className="text-white">ERC-7540</dt><dd>A vault standard for deposits and withdrawals that settle after a request, rather than instantly.</dd></div>
+            <div><dt className="text-white">SHYG</dt><dd>The iShares 0–5 Year High Yield Corporate Bond ETF. It holds below-investment-grade corporate bonds.</dd></div>
+            <div><dt className="text-white">TradFi</dt><dd>Traditional finance: banks, funds and securities markets.</dd></div>
+            <div><dt className="text-white">Agent-addressable</dt><dd>Software can read a vault and draft transaction requests for a wallet to sign.</dd></div>
+          </dl>
+        </details>
+      </section>
       <footer className="text-[12.5px] muted space-y-2 pt-4 border-t" style={{ borderColor: "var(--line)" }}>
         <p className="max-w-[64em]">
           <strong className="text-white">This is information, not advice.</strong> Yields are targets or trailing figures — they vary and can be negative. Terms verified against issuer documents; issuers change terms without telling us. The agent drafts transactions; you sign them; verify the vault contract yourself before depositing real funds.
@@ -285,6 +301,11 @@ export default function Home() {
         <p>
           Every vault here — including our client IXS&apos;s — is held to the same verified-terms standard. · Data: VaultTerms registry + CoinMarketCap Real-World Assets API · vault execution via @ixswap1/vault-agent-sdk · #BuildwithCMC
         </p>
+        <nav aria-label="Footer" className="flex flex-wrap gap-4">
+          <a href="#privacy">Privacy</a><a href="#terms">Terms</a><a href="https://github.com/Robinhill85/willrwaletmein/issues" target="_blank" rel="noopener noreferrer">Support ↗</a>
+        </nav>
+        <section id="privacy"><h2 className="font-semibold text-white">Privacy</h2><p>Chat messages and the wallet context shown to the agent are sent to this site’s server and Anthropic to generate replies. Market lookups go to VaultTerms and CoinMarketCap; wallet reads use public blockchain RPC services. Don’t enter secrets or personal documents. This app keeps the transcript in page memory; service providers may retain request logs under their own policies.</p></section>
+        <section id="terms"><h2 className="font-semibold text-white">Terms</h2><p>This site provides information and unsigned transaction drafts. Availability, eligibility and returns are not guaranteed. Your use of a vault is subject to its issuer’s terms; read those before signing. <a href="https://vaultterms.com">Read vault terms ↗</a></p></section>
       </footer>
     </main>
   );

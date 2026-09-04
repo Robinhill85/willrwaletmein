@@ -5,7 +5,7 @@ export function HowItWorks() {
       <ul className="space-y-2 list-disc pl-5" style={{ color: "#dde5ff" }}>
         <li>
           <strong>Answers come from two sources, shown under every reply:</strong> the{" "}
-          <a href="https://vaultterms.com" target="_blank" rel="noopener noreferrer">VaultTerms registry</a> (hand-verified terms, KYC tiers, minimums, jurisdictions for ~26 RWA vaults) and the{" "}
+          <a href="https://vaultterms.com" target="_blank" rel="noopener noreferrer">VaultTerms registry</a> (hand-verified terms, KYC tiers, minimums, jurisdictions for the verified vault entries) and the{" "}
           <a href="https://coinmarketcap.com/api/documentation/pro-api-reference/real-world-assets" target="_blank" rel="noopener noreferrer">CoinMarketCap Real-World Assets API</a>{" "}
           (live tokenized prices, market caps, underlying tokens, TradFi venues, issuers).
         </li>
@@ -20,7 +20,7 @@ export function HowItWorks() {
         <li>
           <strong>Async vault.</strong> Deposits and redemptions are request → operator fulfilment → claim, not instant swaps. The agent tracks your pending and claimable amounts.
         </li>
-        <li>Reasoning by Claude (Anthropic). Open source on GitHub.</li>
+        <li>Reasoning by Claude (Anthropic). <a href="https://github.com/Robinhill85/willrwaletmein" target="_blank" rel="noopener noreferrer">Open source on GitHub ↗</a>.</li>
       </ul>
     </section>
   );
