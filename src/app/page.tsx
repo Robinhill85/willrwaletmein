@@ -214,8 +214,8 @@ export default function Home() {
           </div>
           <div className="panel-deep p-3 text-[12.5px]" style={{ color: "#dde5ff" }}>
             <div className="k mb-1" style={{ color: "var(--accent2)" }}>For you, manually</div>
-            One-time basic KYC, deposit from $100, withdraw anytime with next-day settlement — at{" "}
-            <a href="https://vaults.ixs.finance/vaults" target="_blank" rel="noopener noreferrer">Open on IXS ↗</a>.
+            One-time basic KYC, deposit from $100, withdraw anytime with next-day settlement.{" "}
+            <a href="https://vaults.ixs.finance/vaults" target="_blank" rel="noopener noreferrer">Open on IXS ↗</a>
           </div>
         </div>
       </section>

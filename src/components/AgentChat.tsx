@@ -188,6 +188,7 @@ export function AgentChat({
           aria-label="Message your agent"
           placeholder="Ask about any vault, or tell me what to do…"
           value={input}
+          disabled={isLoading}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
