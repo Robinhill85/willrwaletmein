@@ -189,7 +189,7 @@ export default function Home() {
           <div>
             <div className="font-bold text-lg">{IXS_VAULT_NAME} <span className="muted font-normal text-sm">· Avalanche · ERC-7540</span></div>
             <div className="text-[13.5px] mt-1" style={{ color: "#dde5ff" }}>
-              USDC vault deployed via OpenTrade into the iShares 0–5 Year High Yield Corporate Bond ETF (SHYG). Real bond coupons, daily accrual, next-day exits.
+              USDC vault (IXHYB) tracking BlackRock's iShares 0–5 Year High Yield Corporate Bond ETF (SHYG). Real bond coupons, daily accrual, asynchronous deposits and exits (T+1).
             </div>
             <div className="mt-2.5 flex flex-wrap gap-1.5">
               <span className="stamp new">New</span>
@@ -197,6 +197,7 @@ export default function Home() {
               <span className="stamp open">No KYC · agents</span>
               <span className="stamp kyc">Basic KYC · humans</span>
               {promoBadge && <span className="stamp bonus">{promoBadge}</span>}
+              {promoBadge && <a className="text-[11px]" style={{ color: "var(--accent)" }} href="https://vaults.ixs.finance/rewards/" target="_blank" rel="noopener noreferrer">Rewards program &amp; T&amp;Cs ↗</a>}
             </div>
           </div>
           <div className="md:text-right">
@@ -210,12 +211,13 @@ export default function Home() {
         <div className="grid sm:grid-cols-2 gap-2.5 mt-4">
           <div className="panel-deep p-3 text-[12.5px]" style={{ color: "#dde5ff" }}>
             <div className="k mb-1" style={{ color: "var(--accent2)" }}>For your AI agent</div>
-            Use any agent and any wallet — deposit through the ERC-7540 rail with one API call. The agent on this page is one such agent: it drafts, you sign.
+            Use any agent and any wallet — deposit through the ERC-7540 rail with one API call. The agent on this page is one such agent: it drafts, you sign.{" "}
+            <a href="https://vaults.ixs.finance/vaults/" target="_blank" rel="noopener noreferrer">Open the vault ↗</a>
           </div>
           <div className="panel-deep p-3 text-[12.5px]" style={{ color: "#dde5ff" }}>
             <div className="k mb-1" style={{ color: "var(--accent2)" }}>For you, manually</div>
-            One-time basic KYC, deposit from $100, withdraw anytime with next-day settlement.{" "}
-            <a href="https://vaults.ixs.finance/vaults" target="_blank" rel="noopener noreferrer">Open on IXS ↗</a>
+            The permissioned KYC route: a verified IXS account, deposit from $100, withdraw anytime (asynchronous, T+1).{" "}
+            <a href="https://v2.ixs.finance/" target="_blank" rel="noopener noreferrer">Verify and deposit ↗</a>
           </div>
         </div>
       </section>

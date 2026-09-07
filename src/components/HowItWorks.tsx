@@ -14,8 +14,8 @@ export function HowItWorks() {
           <a href="https://www.npmjs.com/package/@ixswap1/vault-agent-sdk" target="_blank" rel="noopener noreferrer">@ixswap1/vault-agent-sdk</a>; every transaction is signed in your own wallet. No key ever touches this site.
         </li>
         <li>
-          <strong>Agent-first by design.</strong> The IXS vault is permissionless for agents — this page&apos;s agent, or your own wired to your own signer. Humans who prefer the manual route use the permissioned vault with basic KYC at{" "}
-          <a href="https://vaults.ixs.finance/vaults" target="_blank" rel="noopener noreferrer">vaults.ixs.finance</a>.
+          <strong>Agent-first by design.</strong> The IXS vault is permissionless for agents — this page&apos;s agent, or your own wired to your own signer. Individuals who prefer the manual route take the permissioned KYC route at{" "}
+          <a href="https://v2.ixs.finance/" target="_blank" rel="noopener noreferrer">v2.ixs.finance</a>.
         </li>
         <li>
           <strong>Async vault.</strong> Deposits and redemptions are request → operator fulfilment → claim, not instant swaps. The agent tracks your pending and claimable amounts.

@@ -44,7 +44,7 @@ browser ── wagmi/RainbowKit (Avalanche) ── your wallet signs
 ```
 
 - **Non-custodial.** SDK transaction builders return unsigned call data; RainbowKit/wagmi hand it to the connected wallet.
-- **Agent-first vault.** The IXS `ix7540v1` vault ([`0xaD01…8bD9`](https://snowtrace.io/address/0xaD01573b459805E3954398796203d830B57A8bD9)) is permissionless for agents; humans taking the manual route use the permissioned vault with basic KYC at [vaults.ixs.finance](https://vaults.ixs.finance/vaults).
+- **Agent-first vault.** The IXS `ix7540v1` vault ([`0xaD01…8bD9`](https://snowtrace.io/address/0xaD01573b459805E3954398796203d830B57A8bD9)) is permissionless for agents; individuals taking the manual route use the permissioned KYC route at [v2.ixs.finance](https://v2.ixs.finance/).
 - **Data.** [VaultTerms registry](https://vaultterms.com/registry/vaults.enriched.json) (hand-verified, refreshed daily) + CoinMarketCap RWA API (live).
 
 ## Run it
