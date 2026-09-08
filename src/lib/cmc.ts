@@ -88,7 +88,10 @@ export async function cmcGet<T = unknown>(
 export function rwaList(opts: { asset_type?: RwaAssetType; limit?: number; sort?: string }, log?: CmcCall[]) {
   const params: Record<string, string> = { limit: String(Math.min(opts.limit ?? 25, 100)) };
   if (opts.asset_type) params.asset_type = opts.asset_type;
-  if (opts.sort) params.sort = opts.sort;
+  if (opts.sort) {
+    params.sort = opts.sort;
+    params.sort_dir = "desc";
+  }
   return cmcGet(RWA_ENDPOINTS.list, params, log);
 }
 
