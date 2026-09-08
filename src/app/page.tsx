@@ -19,7 +19,7 @@ import {
 import { AgentChat, type ProposedAction } from "@/components/AgentChat";
 import { OtherVaults } from "@/components/OtherVaults";
 import { DataMetric } from "@/components/DataMetric";
-import { formatTvlUsd, IXS_VAULT_NAME, ONCHAIN_MAX_AGE, TERMS_MAX_AGE } from "@/lib/data-status";
+import { formatTvlUsd, IXS_VAULT_NAME, REGISTRY_MAX_AGE, TERMS_MAX_AGE } from "@/lib/data-status";
 import { activePromo } from "@/lib/registry";
 import { useVaultRegistry, PUBLIC_REGISTRY_URL } from "@/lib/use-vault-registry";
 import { HowItWorks } from "@/components/HowItWorks";
@@ -43,6 +43,7 @@ export default function Home() {
   const registry = useVaultRegistry();
   const ixs = registry.data?.find(v => v.id === "ixs-blackrock-hy-bond");
   const promoBadge = ixs && !registry.isError ? activePromo(ixs)?.badge : null;
+  const combinedTvl = ixs?.live?.tvl_scope === "combined" && ixs.live.tvl_complete ? ixs.live.tvl_usd : null;
 
   const vault = { address: VAULT_ADDRESS, abi: vaultAbi } as const;
 
@@ -118,6 +119,7 @@ export default function Home() {
     assetAddress: assetAddress ?? null,
     assetSymbol: sym,
     totalAssets: tvl != null ? String(tvl) : null,
+    totalAssetsScope: "Avalanche execution vault only; for the combined product TVL across Avalanche and BNB Chain, read vault_terms.",
     totalShares: totalSupply !== undefined ? formatUnits(totalSupply as bigint, shareDec) : null,
     connectedWallet: address ?? null,
     userAssetBalance: assetBalance !== undefined ? formatUnits(assetBalance as bigint, dec) : null,
@@ -188,8 +190,9 @@ export default function Home() {
         <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_18rem] md:items-center">
           <div>
             <div className="font-bold text-lg">{IXS_VAULT_NAME} <span className="muted font-normal text-sm">· Avalanche · ERC-7540</span></div>
+            <p className="text-xs muted mt-1">Also available on <a href="https://vaults.ixs.finance/vaults/" target="_blank" rel="noopener noreferrer">BNB Chain ↗</a>. This agent deposits on Avalanche; check the BNB route for its terms and rewards.</p>
             <div className="text-[13.5px] mt-1" style={{ color: "#dde5ff" }}>
-              USDC vault (IXHYB) tracking BlackRock's iShares 0–5 Year High Yield Corporate Bond ETF (SHYG). Real bond coupons, daily accrual, asynchronous deposits and exits (T+1).
+              USDC vault (IXHYB) tracking BlackRock&apos;s iShares 0–5 Year High Yield Corporate Bond ETF (SHYG). Real bond coupons, daily accrual, asynchronous deposits and exits (T+1).
             </div>
             <div className="mt-2.5 flex flex-wrap gap-1.5">
               <span className="stamp new">New</span>
@@ -202,7 +205,8 @@ export default function Home() {
           </div>
           <div className="md:text-right">
             <DataMetric label="Yield" value={ixs?.yield_profile?.target_pct} formatted={`${ixs?.yield_profile?.target_pct}%`} kind="estimated target · not guaranteed" source="VaultTerms" sourceUrl={PUBLIC_REGISTRY_URL} updatedAt={ixs?.verified_at} maxAge={TERMS_MAX_AGE} failed={registry.isError} loading={registry.isPending} />
-            <DataMetric label="TVL" value={tvl} formatted={tvl == null ? undefined : formatTvlUsd(tvl)} source="onchain · Avalanche" sourceUrl={`https://snowtrace.io/address/${VAULT_ADDRESS}`} updatedAt={assetsRead.dataUpdatedAt} maxAge={ONCHAIN_MAX_AGE} failed={assetsRead.isError} loading={assetsRead.isPending} />
+            <DataMetric label="Combined TVL" value={combinedTvl} formatted={combinedTvl == null ? undefined : formatTvlUsd(combinedTvl)} source="onchain · Avalanche + BNB" sourceUrl={PUBLIC_REGISTRY_URL} updatedAt={ixs?.live?.as_of ?? undefined} maxAge={REGISTRY_MAX_AGE} failed={registry.isError} loading={registry.isPending} kind="daily snapshot · USDC ≈ USD" />
+            {ixs?.live?.tvl_chains?.map(c => <div key={c.chain} className="text-[11px] muted mt-1">{c.chain}: {c.tvl_usd == null ? "Unavailable" : formatTvlUsd(c.tvl_usd)}</div>)}
             <div className="text-xs muted mt-1">$100 min</div>
             {(registry.isError || assetsRead.isError) && <button className="btn mt-2" onClick={() => { registry.refetch(); assetsRead.refetch(); }} disabled={registry.isFetching || assetsRead.isFetching}>Retry data</button>}
             <div className="text-[10px] font-mono muted break-all mt-1">{VAULT_ADDRESS}</div>

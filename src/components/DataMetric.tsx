@@ -5,7 +5,7 @@ import { dataStatus } from "@/lib/data-status";
 
 export function DataMetric({ label, value, formatted, updatedAt, maxAge, source, sourceUrl, failed = false, loading = false, kind }: {
   label: string; value: number | null | undefined; formatted?: string;
-  updatedAt?: string | number; maxAge: number; source: string; sourceUrl: string;
+  updatedAt?: string | number | null; maxAge: number; source: string; sourceUrl: string;
   failed?: boolean; loading?: boolean; kind?: string;
 }) {
   const [now, setNow] = useState<number | null>(null);

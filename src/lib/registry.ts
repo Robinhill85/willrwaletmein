@@ -16,6 +16,7 @@ export interface Vault {
   underlying: string;
   tokens: string[];
   chains: string[];
+  also_available_on?: { chain: string; url: string; note: string }[];
   terms: {
     min_investment: string;
     kyc: KycTier;
@@ -33,7 +34,10 @@ export interface Vault {
   };
   yield_profile?: { target_pct?: number; trailing_12m_pct?: number; guaranteed?: boolean; note?: string };
   promotions?: { name: string; badge?: string; window: { start: string; end: string }; mechanic: string; tiers?: unknown[]; caveats?: string }[];
-  live?: { tvl_usd: number | null; apy_pct: number | null; as_of: string; apy_check_asksurf?: number };
+  live?: { tvl_usd: number | null; apy_pct: number | null; as_of: string | null; apy_check_asksurf?: number;
+    tvl_source?: string; tvl_scope?: "combined" | "protocol" | "project_reference_pool"; tvl_method?: string; tvl_complete?: boolean;
+    apy_scope?: "project_reference_pool"; apy_source?: string;
+    tvl_chains?: { chain: string; contract: string; tvl_usd: number | null; as_of: string | null }[] };
   risk_notes: string;
   sources: string[];
   status?: string;
@@ -62,7 +66,7 @@ export async function loadRegistry(): Promise<Vault[]> {
 
 export function apyOf(v: Vault): { n: number | null; tag: string } {
   if (v.yield_profile?.target_pct != null) return { n: v.yield_profile.target_pct, tag: "target" };
-  if (v.live?.apy_pct != null) return { n: Math.round(v.live.apy_pct * 100) / 100, tag: "reported" };
+  if (v.live?.apy_pct != null) return { n: Math.round(v.live.apy_pct * 100) / 100, tag: v.live.apy_scope === "project_reference_pool" ? "project reference pool" : "reported" };
   return { n: null, tag: "" };
 }
 
@@ -105,16 +109,22 @@ export function summarize(v: Vault) {
     asset_class: v.asset_class,
     underlying: v.underlying,
     chains: v.chains,
+    also_available_on: v.also_available_on ?? [],
     kyc: v.terms.kyc,
     agent_addressable: !!v.access.agent_addressable,
     min_usd: v.access.min_usd ?? 0,
     admits: v.access.regions,
     yield: apy.n != null ? `${apy.n}% (${apy.tag})` : "n/a",
-    yield_status: dataStatus(apy.n, apy.tag === "target" ? v.verified_at : v.live?.as_of, apy.tag === "target" ? TERMS_MAX_AGE : REGISTRY_MAX_AGE, Date.now()),
+    yield_source: apy.tag === "target" ? "Issuer target via VaultTerms" : v.live?.apy_source ?? "DeFiLlama via VaultTerms",
+    yield_status: dataStatus(apy.n, apy.tag === "target" ? v.verified_at : v.live?.as_of ?? undefined, apy.tag === "target" ? TERMS_MAX_AGE : REGISTRY_MAX_AGE, Date.now()),
     yield_updated_at: apy.tag === "target" ? v.verified_at : v.live?.as_of ?? null,
     source: "VaultTerms",
     tvl_usd: v.live?.tvl_usd ?? null,
-    tvl_status: dataStatus(v.live?.tvl_usd, v.live?.as_of, REGISTRY_MAX_AGE, Date.now()),
+    tvl_scope: v.live?.tvl_scope ?? "source-reported",
+    tvl_source: v.live?.tvl_source ?? "DeFiLlama via VaultTerms",
+    tvl_method: v.live?.tvl_method ?? null,
+    tvl_chains: v.live?.tvl_chains ?? null,
+    tvl_status: dataStatus(v.live?.tvl_usd, v.live?.as_of ?? undefined, REGISTRY_MAX_AGE, Date.now()),
     tvl_updated_at: v.live?.as_of ?? null,
     status: v.status ?? "active",
     promo: promo ? `${promo.name} until ${promo.window.end}` : null,

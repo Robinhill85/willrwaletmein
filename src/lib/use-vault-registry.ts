@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { Vault } from "./registry";
 
-export const PUBLIC_REGISTRY_URL = "https://vaultterms.com/registry/vaults.enriched.json";
+export const PUBLIC_REGISTRY_URL = process.env.NEXT_PUBLIC_REGISTRY_URL ?? "https://vaultterms.com/registry/vaults.enriched.json";
 
 export function useVaultRegistry() {
   return useQuery<Vault[]>({

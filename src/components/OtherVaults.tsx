@@ -25,8 +25,8 @@ function Card({ v, failed }: { v: Vault; failed: boolean }) {
         </div>
       </div>
       <div className="sm:text-right">
-        <DataMetric label="Yield" value={apy.n} formatted={`${apy.n}%`} kind={apy.tag} source="VaultTerms" sourceUrl={PUBLIC_REGISTRY_URL} updatedAt={apy.tag === "target" ? v.verified_at : v.live?.as_of} maxAge={apy.tag === "target" ? TERMS_MAX_AGE : REGISTRY_MAX_AGE} failed={failed} />
-        <DataMetric label="TVL" value={v.live?.tvl_usd} formatted={v.live?.tvl_usd == null ? undefined : formatTvlUsd(v.live.tvl_usd)} source="VaultTerms" sourceUrl={PUBLIC_REGISTRY_URL} updatedAt={v.live?.as_of} maxAge={REGISTRY_MAX_AGE} failed={failed} />
+        <DataMetric label={apy.tag === "project reference pool" ? "Reference pool APY" : "Yield"} value={apy.n} formatted={`${apy.n}%`} kind={apy.tag === "project reference pool" ? "not a verified product yield" : apy.tag} source="VaultTerms" sourceUrl={PUBLIC_REGISTRY_URL} updatedAt={apy.tag === "target" ? v.verified_at : v.live?.as_of} maxAge={apy.tag === "target" ? TERMS_MAX_AGE : REGISTRY_MAX_AGE} failed={failed} />
+        <DataMetric label={v.live?.tvl_scope === "protocol" ? "Protocol TVL" : v.live?.tvl_scope === "project_reference_pool" ? "Reference pool TVL" : "TVL"} value={v.live?.tvl_usd} formatted={v.live?.tvl_usd == null ? undefined : formatTvlUsd(v.live.tvl_usd)} source="VaultTerms" sourceUrl={PUBLIC_REGISTRY_URL} updatedAt={v.live?.as_of ?? undefined} maxAge={REGISTRY_MAX_AGE} failed={failed} />
         <div className="text-xs muted">{v.access.min_usd == null ? "Minimum unavailable · VaultTerms" : fmtMin(v.access.min_usd)}</div>
         {go && (
           <a className="btn btn-accent mt-2 no-underline" href={go.url} target="_blank" rel="noopener noreferrer">
