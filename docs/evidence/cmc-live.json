@@ -1,0 +1,1125 @@
+{
+  "captured_at": "2026-09-08T22:16:45.059Z",
+  "calls": [
+    {
+      "request": {
+        "endpoint": "/v5/real-world-assets/assets/list",
+        "params": {
+          "limit": "5",
+          "asset_type": "stock",
+          "sort": "tokenized_market_cap",
+          "sort_dir": "desc"
+        },
+        "status": 200,
+        "creditCount": 0,
+        "elapsedMs": 220
+      },
+      "response": {
+        "data": {
+          "total_size": 4812,
+          "has_more": true,
+          "rwa_assets": [
+            {
+              "name": "Circle Internet Group Inc",
+              "symbol": "CRCL",
+              "slug": "circle",
+              "quotes": [
+                {
+                  "symbol": "USD",
+                  "crypto_id": 2781,
+                  "average_tokenized_price": 96.03797204963425,
+                  "tokenized_market_cap": 309512774.1250811,
+                  "tokenized_volume_24h": 51221772.88486302,
+                  "last_updated": "2026-09-08T22:14:59.000Z"
+                }
+              ],
+              "rwa_id": 115,
+              "asset_type": "stock",
+              "rwa_rank": 533,
+              "has_tokens": true,
+              "average_tokenized_price": 96.03797204963425,
+              "tokenized_market_cap": 309512774.1250811,
+              "tokenized_volume_24h": 51221772.88486302,
+              "last_updated": "2026-09-08T22:15:38.000Z"
+            },
+            {
+              "name": "SpaceX",
+              "symbol": "SPCX",
+              "slug": "spacex",
+              "quotes": [
+                {
+                  "symbol": "USD",
+                  "crypto_id": 2781,
+                  "average_tokenized_price": 152.45761450489292,
+                  "tokenized_market_cap": 212273551.35829148,
+                  "tokenized_volume_24h": 51933172.1468933,
+                  "last_updated": "2026-09-08T22:14:59.000Z"
+                }
+              ],
+              "rwa_id": 9,
+              "asset_type": "stock",
+              "rwa_rank": 9,
+              "has_tokens": true,
+              "average_tokenized_price": 152.45761450489292,
+              "tokenized_market_cap": 212273551.35829148,
+              "tokenized_volume_24h": 51933172.1468933,
+              "last_updated": "2026-09-08T22:16:18.000Z"
+            },
+            {
+              "name": "MicroStrategy Inc",
+              "symbol": "MSTR",
+              "slug": "microstrategy",
+              "quotes": [
+                {
+                  "symbol": "USD",
+                  "crypto_id": 2781,
+                  "average_tokenized_price": 136.82431225969518,
+                  "tokenized_market_cap": 161334354.38360846,
+                  "tokenized_volume_24h": 39136127.60605867,
+                  "last_updated": "2026-09-08T22:14:59.000Z"
+                }
+              ],
+              "rwa_id": 114,
+              "asset_type": "stock",
+              "rwa_rank": 309,
+              "has_tokens": true,
+              "average_tokenized_price": 136.82431225969518,
+              "tokenized_market_cap": 161334354.38360846,
+              "tokenized_volume_24h": 39136127.60605867,
+              "last_updated": "2026-09-08T22:15:25.000Z"
+            },
+            {
+              "name": "Micron Technology Inc",
+              "symbol": "MU",
+              "slug": "micron-technology",
+              "quotes": [
+                {
+                  "symbol": "USD",
+                  "crypto_id": 2781,
+                  "average_tokenized_price": 1003.9365057382719,
+                  "tokenized_market_cap": 119211669.50445572,
+                  "tokenized_volume_24h": 46793432.74843737,
+                  "last_updated": "2026-09-08T22:14:59.000Z"
+                }
+              ],
+              "rwa_id": 12,
+              "asset_type": "stock",
+              "rwa_rank": 14,
+              "has_tokens": true,
+              "average_tokenized_price": 1003.9365057382719,
+              "tokenized_market_cap": 119211669.50445572,
+              "tokenized_volume_24h": 46793432.74843737,
+              "last_updated": "2026-09-08T22:16:21.000Z"
+            },
+            {
+              "name": "Tesla, Inc.",
+              "symbol": "TSLA",
+              "slug": "tesla",
+              "quotes": [
+                {
+                  "symbol": "USD",
+                  "crypto_id": 2781,
+                  "average_tokenized_price": 366.55832382450217,
+                  "tokenized_market_cap": 117604564.67437041,
+                  "tokenized_volume_24h": 65517384.4376682,
+                  "last_updated": "2026-09-08T22:14:59.000Z"
+                }
+              ],
+              "rwa_id": 14,
+              "asset_type": "stock",
+              "rwa_rank": 12,
+              "has_tokens": true,
+              "average_tokenized_price": 366.55832382450217,
+              "tokenized_market_cap": 117604564.67437041,
+              "tokenized_volume_24h": 65517384.4376682,
+              "last_updated": "2026-09-08T22:15:33.000Z"
+            }
+          ]
+        },
+        "status": {
+          "timestamp": "2026-09-08T22:16:44.131Z",
+          "error_code": "0",
+          "error_message": "",
+          "elapsed": 8,
+          "credit_count": 0
+        }
+      }
+    },
+    {
+      "request": {
+        "endpoint": "/v5/real-world-assets/quotes/latest",
+        "params": {
+          "symbol": "NVDA,GOLD",
+          "skip_invalid": "true"
+        },
+        "status": 200,
+        "creditCount": 1,
+        "elapsedMs": 106
+      },
+      "response": {
+        "data": {
+          "rwa_assets": [
+            {
+              "name": "Nvidia Corp",
+              "symbol": "NVDA",
+              "slug": "nvidia",
+              "quotes": [
+                {
+                  "symbol": "USD",
+                  "crypto_id": 2781,
+                  "average_tokenized_price": 225.9309216697115,
+                  "tokenized_market_cap": 116603285.28566304,
+                  "tokenized_volume_24h": 86101896.984488,
+                  "last_updated": "2026-09-08T22:14:59.000Z"
+                }
+              ],
+              "rwa_id": 2,
+              "asset_type": "stock",
+              "rwa_rank": 2,
+              "has_tokens": true,
+              "average_tokenized_price": 225.9309216697115,
+              "tokenized_market_cap": 116603285.28566304,
+              "tokenized_volume_24h": 86101896.984488,
+              "last_updated": "2026-09-08T22:15:39.218Z",
+              "tokens": [
+                {
+                  "symbol": "NVDAX",
+                  "name": "NVIDIA tokenized stock (xStock)",
+                  "price": 225.79794197132634,
+                  "crypto_id": 36992,
+                  "issuer_id": "6878977dcbbf471de3366e85",
+                  "issuer_name": "Backed Assets",
+                  "market_cap": 39249987.08,
+                  "volume_24h": 11564956.17204893
+                },
+                {
+                  "symbol": "NVDA.D",
+                  "name": "NVIDIA tokenized stock (Dinari)",
+                  "price": null,
+                  "crypto_id": 28616,
+                  "issuer_id": "688c6172abae9b5b9fb30359",
+                  "issuer_name": "Dinari Assets",
+                  "market_cap": null,
+                  "volume_24h": null
+                },
+                {
+                  "symbol": "NVDAon",
+                  "name": "NVIDIA Tokenized Stock (Ondo)",
+                  "price": 225.8020632100008,
+                  "crypto_id": 38093,
+                  "issuer_id": "688ca4ccabae9b5b9fb3167a",
+                  "issuer_name": "Ondo Assets",
+                  "market_cap": 38105122.54,
+                  "volume_24h": 2683422.8486732
+                },
+                {
+                  "symbol": "NVDA",
+                  "name": "NVIDIA (Derivatives)",
+                  "price": 225.81318280717775,
+                  "crypto_id": 38153,
+                  "issuer_id": "695e11f774b54210f3b95dc3",
+                  "issuer_name": "NA (Derivatives)",
+                  "market_cap": 0,
+                  "volume_24h": 339233.9283101
+                },
+                {
+                  "symbol": "NVDAB",
+                  "name": "NVIDIA Tokenized bStocks",
+                  "price": 225.816291137359,
+                  "crypto_id": 40215,
+                  "issuer_id": "6a2aed5097c45356b1a5f710",
+                  "issuer_name": "bStocks",
+                  "market_cap": 16442399.73,
+                  "volume_24h": 10763106.70220195
+                },
+                {
+                  "symbol": "rNVDA",
+                  "name": "NVIDIA Tokenized Stock (Reality)",
+                  "price": 225.67846504938288,
+                  "crypto_id": 40605,
+                  "issuer_id": "6a43600c282e7240b76c8bbb",
+                  "issuer_name": "Reality",
+                  "market_cap": 4452679.11,
+                  "volume_24h": 522246.11508784
+                },
+                {
+                  "symbol": "NVDA",
+                  "name": "NVIDIA Tokenized Stock (Robinhood)",
+                  "price": 225.7188503040548,
+                  "crypto_id": 40685,
+                  "issuer_id": "6a465832fbe3004b1a0ea2dd",
+                  "issuer_name": "Robinhood",
+                  "market_cap": 17902771.43,
+                  "volume_24h": 59335959.08456925
+                },
+                {
+                  "symbol": "WNVDAX",
+                  "name": "Wrapped NVIDIA Tokenized stock (xStock)",
+                  "price": 226.1523127908516,
+                  "crypto_id": 37270,
+                  "issuer_id": "6878977dcbbf471de3366e85",
+                  "issuer_name": "Backed Assets",
+                  "market_cap": 449875.5,
+                  "volume_24h": 870171.76349895
+                }
+              ],
+              "tradfi_markets": [
+                {
+                  "exchange": {
+                    "slug": "binance",
+                    "name": "Binance",
+                    "exchange_id": 270
+                  },
+                  "ticker": "NVDA",
+                  "market_url": "https://www.binance.com/en/stocks/EQ_NVDA"
+                }
+              ]
+            },
+            {
+              "name": "Gold",
+              "symbol": "GOLD",
+              "slug": "gold",
+              "quotes": [
+                {
+                  "symbol": "USD",
+                  "crypto_id": 2781,
+                  "average_tokenized_price": 4355.969358909986,
+                  "tokenized_market_cap": 4644749680.962821,
+                  "tokenized_volume_24h": 416448088.4277441,
+                  "last_updated": "2026-09-08T22:14:59.000Z"
+                }
+              ],
+              "rwa_id": 1,
+              "asset_type": "commodity",
+              "rwa_rank": 1,
+              "has_tokens": true,
+              "average_tokenized_price": 4355.969358909986,
+              "tokenized_market_cap": 4644749680.962821,
+              "tokenized_volume_24h": 416448088.4277441,
+              "last_updated": "2026-09-08T22:15:37.276Z",
+              "tokens": [
+                {
+                  "symbol": "PAXG",
+                  "name": "PAX Gold",
+                  "price": 4357.706241678997,
+                  "crypto_id": 4705,
+                  "issuer_id": "68904c24abae9b5b9fb35815",
+                  "issuer_name": "Paxos",
+                  "market_cap": 1884722382.47,
+                  "volume_24h": 172564308.88021934
+                },
+                {
+                  "symbol": "XAUt",
+                  "name": "Tether Gold",
+                  "price": 4356.5948703953245,
+                  "crypto_id": 5176,
+                  "issuer_id": "68904e9cabae9b5b9fb358ac",
+                  "issuer_name": "Tether Holdings",
+                  "market_cap": 2669824411.57,
+                  "volume_24h": 241483625.57426283
+                },
+                {
+                  "symbol": "XAUM",
+                  "name": "Matrixdock Gold",
+                  "price": 4346.528963382447,
+                  "crypto_id": 34212,
+                  "issuer_id": "68905a7babae9b5b9fb35a8d",
+                  "issuer_name": "Matrixdock",
+                  "market_cap": 47699908.58,
+                  "volume_24h": 463685.25170969
+                },
+                {
+                  "symbol": "CGO",
+                  "name": "Comtech Gold",
+                  "price": 139.97392114503455,
+                  "crypto_id": 20245,
+                  "issuer_id": "68904cceabae9b5b9fb35839",
+                  "issuer_name": "Comtech Gold",
+                  "market_cap": 19736322.88,
+                  "volume_24h": 897996.12686001
+                },
+                {
+                  "symbol": "VNXAU",
+                  "name": "VNX Gold",
+                  "price": 139.8048752624342,
+                  "crypto_id": 22492,
+                  "issuer_id": "68905b43abae9b5b9fb35a95",
+                  "issuer_name": "VNX",
+                  "market_cap": 5885785.25,
+                  "volume_24h": 1972.51698231
+                },
+                {
+                  "symbol": "XAUT0",
+                  "name": "Tether Gold Tokens",
+                  "price": 4354.430400163049,
+                  "crypto_id": 37082,
+                  "issuer_id": "68904e9cabae9b5b9fb358ac",
+                  "issuer_name": "Tether Holdings",
+                  "market_cap": 17086290.34,
+                  "volume_24h": 267210.1102779
+                },
+                {
+                  "symbol": "XAU",
+                  "name": "Gold (Derivatives)",
+                  "price": 4358.904452713712,
+                  "crypto_id": 39344,
+                  "issuer_id": "695e11f774b54210f3b95dc3",
+                  "issuer_name": "NA (Derivatives)",
+                  "market_cap": 0,
+                  "volume_24h": 0
+                }
+              ],
+              "tradfi_markets": []
+            }
+          ]
+        },
+        "status": {
+          "timestamp": "2026-09-08T22:16:44.241Z",
+          "error_code": "0",
+          "error_message": "",
+          "elapsed": 5,
+          "credit_count": 1
+        }
+      }
+    },
+    {
+      "request": {
+        "endpoint": "/v5/real-world-assets/info",
+        "params": {
+          "symbol": "NVDA",
+          "skip_invalid": "true"
+        },
+        "status": 200,
+        "creditCount": 1,
+        "elapsedMs": 269
+      },
+      "response": {
+        "data": {
+          "rwa_assets": [
+            {
+              "name": "Nvidia Corp",
+              "symbol": "NVDA",
+              "slug": "nvidia",
+              "website": "https://www.nvidia.com",
+              "employees": 36000,
+              "founded": "1993-04-04",
+              "industry": "Semiconductors & Related Devices",
+              "cik": "0001045810",
+              "about": {
+                "description": "###  What is NVIDIA, and when was it founded?\n\nNew investors often associate NVIDIA with gaming, but its reach goes far beyond graphics cards.\n\nNVIDIA is a U.S.-based semiconductor and computing company specializing in GPUs, AI hardware, and high-performance computing. It was founded in 1993 in California and became publicly traded in 1999 under the ticker NVDA. Originally built for the gaming market, NVIDIA now powers global AI models, cloud data centers, autonomous vehicles, and industrial simulations. Its rapid expansion into data infrastructure has redefined its role in modern computing.\n\n\n###  Who founded NVIDIA, and who is its current CEO?\n\nThe personalities behind tech companies often get overlooked - until they dominate entire sectors.\n\nNVIDIA was founded in 1993 by Jensen Huang, Chris Malachowsky, and Curtis Priem. Huang has served as CEO since the company’s inception and remains its public face and strategic leader. His deep engineering background and long-term vision have been central to NVIDIA’s rise from a GPU provider to a global AI infrastructure firm. His leadership is widely credited for navigating multiple market pivots.\n\n\n###  Who owns NVIDIA today? Who are the company’s largest shareholders?\n\nRetail investors often miss who’s really moving the stock behind the scenes - institutions.\n\nNVIDIA is a publicly traded company owned by a mix of institutional investors and retail shareholders. Its largest holders include investment giants like Vanguard, BlackRock, and Fidelity. Jensen Huang also owns a significant personal stake. Institutions control a majority of the float, giving them outsized influence over price movements, especially during earnings cycles or broader tech sell-offs.\n\n###  How did NVIDIA become a leader in AI, GPUs, and data centers?\n\nMost companies don’t survive one pivot. NVIDIA nailed multiple.\n\nNVIDIA built dominance in the gaming GPU market, but its real edge came from repurposing GPUs for general-purpose computing. This made it ideal for training neural networks and building AI models. Over time, NVIDIA invested in CUDA (its developer platform), data center hardware, and AI chips like the H100. This ecosystem approach gave it a monopoly-like position in AI computing, powering everything from ChatGPT to Tesla’s AI training clusters.\n\n\n###  What industries rely most on NVIDIA’s products?\n\nMany assume NVIDIA only powers games. In reality, it runs some of the world’s most complex systems.\n\nIndustries using NVIDIA include AI research, autonomous vehicles, robotics, gaming, defense, pharmaceuticals, and finance. Its chips are foundational for training and deploying machine learning models, which makes it essential to cloud computing platforms and supercomputers. Hospitals, universities, and energy companies increasingly depend on its hardware for simulations and data analysis.\n\n\n###  What is NVIDIA’s roadmap for AI, autonomous vehicles, and the metaverse?\n\nNVIDIA doesn’t build consumer apps - it builds the platforms they run on.\n\nIts roadmap includes high-efficiency chips like the Blackwell architecture for large-scale AI, AI factories for model training, and Drive platforms for autonomous vehicles. NVIDIA also powers 3D virtual environments through its Omniverse platform, designed to simulate real-world factories, workflows, and digital twins. It is not competing with OpenAI or Meta - it's building the infrastructure they all rely on.\n\n\n###  What role will NVIDIA play in future blockchain and crypto infrastructure?\n\nWhile some chipmakers avoided crypto, NVIDIA played a different game.\n\nNVIDIA’s GPUs have historically powered crypto mining, especially for Ethereum before its shift to proof-of-stake. Today, its main role is likely to emerge in AI x blockchain applications - such as decentralized compute, zk-proofs, and data-heavy blockchain simulations. NVIDIA’s chips are also used in validating cryptographic models and running complex smart contracts on off-chain AI layers.\n\n\n###  What is NVIDIA’s current stock price, and why is it moving today?\n\nPrice alone doesn’t tell the story - you need context.\n\nNVIDIA’s stock price changes daily based on market sentiment, earnings expectations, and broader tech trends. Short-term price moves are often tied to AI-related news, analyst upgrades, or macroeconomic data like inflation or interest rate changes. NVDA is also a major component of tech indexes, so ETF flows can drive volume up or down without company-specific catalysts.\n\n\n###  Is NVIDIA stock a good buy for long-term investors?\n\nRetail traders often focus on hype cycles - but long-term returns depend on structural trends.\n\nNVIDIA offers exposure to long-term growth in AI, cloud computing, and robotics. Its competitive moat in chip architecture, developer tools, and infrastructure gives it strong pricing power. That said, it trades at a premium valuation, and any slowdown in AI infrastructure spending could trigger a correction. For long-term investors with a high risk tolerance, it’s seen as a core bet on the future of computing.\n\n\n###  Why is NVIDIA stock so volatile?\n\nHigh-growth tech stocks often have explosive upside - and equally sharp corrections.\n\nNVIDIA’s volatility stems from its valuation multiples, reliance on AI infrastructure spending, and concentrated ownership by large institutions. The stock reacts sharply to earnings beats or misses and is also sensitive to geopolitical issues related to chip exports. \n\nTraders also use NVDA for options strategies, which amplifies short-term price swings during events like earnings or product launches.\n\n\n###  What is tokenized NVIDIA stock, and how does it work?\n\nBuying traditional stocks via brokerage isn’t always accessible - tokenized assets offer a workaround.\n\n[Tokenized NVIDIA] (https://coinmarketcap.com/currencies/nvidia-tokenized-stock-xstock/) stock is a digital asset that mirrors the price of NVDA shares. These tokens are typically offered by platforms that hold real shares in custody or replicate their value synthetically. Users can trade them 24/7 on blockchain platforms, often using stablecoins. \n\nHowever, tokenized stocks don’t always come with voting rights or dividend access and depend heavily on the issuing platform’s credibility.\n\n\n###  Where can I buy tokenized NVIDIA stock on the blockchain?\n\nNot all tokenized stocks are available everywhere - and regulation plays a big role.\n\nTokenized NVIDIA shares are available on select crypto platforms like Uphold, Mirror Protocol (historically), or Synthetix. Some centralized exchanges also experiment with synthetic equity offerings. These platforms often require KYC and may restrict access based on jurisdiction. \n\nAlways verify whether the token is legally backed or synthetic before trading.\n\n\n###  Is tokenized NVIDIA (NVDA) backed 1:1 by real shares?\n\nNot all tokenized assets are equal - backing matters.\n\nSome platforms offer tokenized NVDA fully backed by real shares held in custody. Others provide synthetic versions that only mirror the price without holding underlying assets. Backed tokens are more likely to reflect actual shareholder rights, while synthetic tokens rely on smart contracts and liquidity providers. Always check the platform’s documentation and custodial agreements before assuming parity with traditional stocks.\n\n\n###  Will NVIDIA’s growth in AI continue to push its stock higher?\n\nAI hype alone can’t sustain valuations - execution matters.\n\nNVIDIA is well-positioned to benefit from expanding AI demand, especially in training infrastructure. However, growth will depend on whether customers like hyperscalers and AI labs continue investing at current levels. The stock’s performance also hinges on new chip architectures, competitive pricing, and government policies on chip exports. If the AI buildout slows or competition intensifies, growth expectations may be revised downward.\n\n\n###  What are the biggest risks for NVIDIA investors in 2025?\n\nHigh-growth stocks carry asymmetrical risk - and NVIDIA is no exception.\n\nKey risks include dependency on a small set of AI clients, regulatory limits on chip exports (especially to China), and rising competition from AMD, Intel, or custom chips built in-house by major cloud providers. Geopolitical tensions, supply chain disruptions, and AI spending slowdowns could also hit revenue. Lastly, valuation risk looms - if future growth doesn’t meet expectations, corrections could be sharp.",
+                "logo": null,
+                "website": "https://www.nvidia.com",
+                "date_added": "2025-07-17T06:35:44.000Z"
+              },
+              "rwa_id": 2,
+              "asset_type": "stock",
+              "rwa_rank": 2,
+              "has_tokens": true,
+              "primary_exchange": "Nasdaq"
+            }
+          ]
+        },
+        "status": {
+          "timestamp": "2026-09-08T22:16:44.488Z",
+          "error_code": "0",
+          "error_message": "",
+          "elapsed": 2,
+          "credit_count": 1
+        }
+      }
+    },
+    {
+      "request": {
+        "endpoint": "/v5/real-world-assets/issuers/list",
+        "params": {
+          "limit": "5",
+          "active": "true"
+        },
+        "status": 200,
+        "creditCount": 0,
+        "elapsedMs": 246
+      },
+      "response": {
+        "data": {
+          "issuers": [
+            {
+              "name": "Backed Assets",
+              "website": "https://assets.backed.fi/",
+              "logo": null,
+              "issuer_id": "6878977dcbbf471de3366e85",
+              "num_tokens": 1176
+            },
+            {
+              "name": "Backpack",
+              "website": "https://backpack.exchange",
+              "logo": "https://s2.coinmarketcap.com/static/img/issuer/M7sS2GzR_400x400.png",
+              "issuer_id": "6a2d54b697c45356b1a634f4",
+              "num_tokens": 6
+            },
+            {
+              "name": "bStocks",
+              "website": null,
+              "logo": "https://s2.coinmarketcap.com/static/img/issuer/Untitled_design__2_.png",
+              "issuer_id": "6a2aed5097c45356b1a5f710",
+              "num_tokens": 74
+            },
+            {
+              "name": "Coinbase",
+              "website": "https://www.coinbase.com/en-sg/tokenize",
+              "logo": "https://s2.coinmarketcap.com/static/img/issuer/m_UOfXvz_400x400.png",
+              "issuer_id": "6a72fe7072996604d45c6733",
+              "num_tokens": 0
+            },
+            {
+              "name": "Comtech Gold",
+              "website": "https://www.comtechgold.com/",
+              "logo": "https://s2.coinmarketcap.com/static/img/issuer/comtech.png",
+              "issuer_id": "68904cceabae9b5b9fb35839",
+              "num_tokens": 1
+            }
+          ],
+          "total_size": 24,
+          "has_more": true
+        },
+        "status": {
+          "timestamp": "2026-09-08T22:16:44.759Z",
+          "error_code": "0",
+          "error_message": "",
+          "elapsed": 3,
+          "credit_count": 0
+        }
+      }
+    },
+    {
+      "request": {
+        "endpoint": "/v5/real-world-assets/issuers",
+        "params": {
+          "issuer_id": "6878977dcbbf471de3366e85",
+          "limit": "100"
+        },
+        "status": 200,
+        "creditCount": 1,
+        "elapsedMs": 275
+      },
+      "response": {
+        "data": {
+          "name": "Backed Assets",
+          "website": "https://assets.backed.fi/",
+          "tokens": [
+            {
+              "name": "Coinbase tokenized stock (xStock)",
+              "symbol": "COINX",
+              "crypto_id": 36989,
+              "rwa_id": 82
+            },
+            {
+              "name": "NVIDIA tokenized stock (xStock)",
+              "symbol": "NVDAX",
+              "crypto_id": 36992,
+              "rwa_id": 2
+            },
+            {
+              "name": "Apple tokenized stock (xStock)",
+              "symbol": "AAPLX",
+              "crypto_id": 36994,
+              "rwa_id": 3
+            },
+            {
+              "name": "MicroStrategy tokenized stock (xStock)",
+              "symbol": "MSTRX",
+              "crypto_id": 37003,
+              "rwa_id": 114
+            },
+            {
+              "name": "Tesla tokenized stock (xStock)",
+              "symbol": "TSLAX",
+              "crypto_id": 37004,
+              "rwa_id": 14
+            },
+            {
+              "name": "Circle tokenized stock (xStock)",
+              "symbol": "CRCLX",
+              "crypto_id": 37005,
+              "rwa_id": 115
+            },
+            {
+              "name": "SP500 tokenized ETF (xStock)",
+              "symbol": "SPYX",
+              "crypto_id": 37006,
+              "rwa_id": 86
+            },
+            {
+              "name": "Abbott tokenized stock (xStock)",
+              "symbol": "ABTX",
+              "crypto_id": 37010,
+              "rwa_id": 112
+            },
+            {
+              "name": "AbbVie tokenized stock (xStock)",
+              "symbol": "ABBVX",
+              "crypto_id": 37011,
+              "rwa_id": 21
+            },
+            {
+              "name": "Accenture tokenized stock (xStock)",
+              "symbol": "ACNX",
+              "crypto_id": 37012,
+              "rwa_id": 136
+            },
+            {
+              "name": "Alphabet tokenized stock (xStock)",
+              "symbol": "GOOGLX",
+              "crypto_id": 37013,
+              "rwa_id": 4
+            },
+            {
+              "name": "Amazon tokenized stock (xStock)",
+              "symbol": "AMZNX",
+              "crypto_id": 37014,
+              "rwa_id": 6
+            },
+            {
+              "name": "Amber tokenized stock (xStock)",
+              "symbol": "AMBRX",
+              "crypto_id": 37015,
+              "rwa_id": 117
+            },
+            {
+              "name": "AppLovin tokenized stock (xStock)",
+              "symbol": "APPX",
+              "crypto_id": 37017,
+              "rwa_id": 108
+            },
+            {
+              "name": "AstraZeneca tokenized stock (xStock)",
+              "symbol": "AZNX",
+              "crypto_id": 37018,
+              "rwa_id": 40
+            },
+            {
+              "name": "Bank of America tokenized stock (xStock)",
+              "symbol": "BACX",
+              "crypto_id": 37019,
+              "rwa_id": 23
+            },
+            {
+              "name": "Berkshire Hathaway tokenized stock (xStock)",
+              "symbol": "BRK.BX",
+              "crypto_id": 37020,
+              "rwa_id": 15
+            },
+            {
+              "name": "Broadcom tokenized stock (xStock)",
+              "symbol": "AVGOX",
+              "crypto_id": 37021,
+              "rwa_id": 13
+            },
+            {
+              "name": "Chevron tokenized stock (xStock)",
+              "symbol": "CVXX",
+              "crypto_id": 37022,
+              "rwa_id": 51
+            },
+            {
+              "name": "Gamestop tokenized stock (xStock)",
+              "symbol": "GMEX",
+              "crypto_id": 37023,
+              "rwa_id": 116
+            },
+            {
+              "name": "Gold tokenized ETF (xStock)",
+              "symbol": "GLDX",
+              "crypto_id": 37024,
+              "rwa_id": 87
+            },
+            {
+              "name": "Goldman Sachs tokenized stock (xStock)",
+              "symbol": "GSX",
+              "crypto_id": 37025,
+              "rwa_id": 39
+            },
+            {
+              "name": "Home Depot tokenized stock (xStock)",
+              "symbol": "HDX",
+              "crypto_id": 37026,
+              "rwa_id": 36
+            },
+            {
+              "name": "Honeywell tokenized stock (xStock)",
+              "symbol": "HONX",
+              "crypto_id": 37027,
+              "rwa_id": null
+            },
+            {
+              "name": "Intel tokenized stock (xStock)",
+              "symbol": "INTCX",
+              "crypto_id": 37028,
+              "rwa_id": 20
+            },
+            {
+              "name": "International Business Machines tokenized stock (xStock)",
+              "symbol": "IBMX",
+              "crypto_id": 37029,
+              "rwa_id": 42
+            },
+            {
+              "name": "Johnson & Johnson tokenized stock (xStock)",
+              "symbol": "JNJX",
+              "crypto_id": 37030,
+              "rwa_id": 19
+            },
+            {
+              "name": "JPMorgan Chase tokenized stock (xStock)",
+              "symbol": "JPMX",
+              "crypto_id": 37031,
+              "rwa_id": 16
+            },
+            {
+              "name": "Cisco tokenized stock (xStock)",
+              "symbol": "CSCOX",
+              "crypto_id": 37032,
+              "rwa_id": 29
+            },
+            {
+              "name": "Coca-Cola tokenized stock (xStock)",
+              "symbol": "KOX",
+              "crypto_id": 37033,
+              "rwa_id": 34
+            },
+            {
+              "name": "Comcast tokenized stock (xStock)",
+              "symbol": "CMCSAX",
+              "crypto_id": 37034,
+              "rwa_id": 208
+            },
+            {
+              "name": "CrowdStrike tokenized stock (xStock)",
+              "symbol": "CRWDX",
+              "crypto_id": 37035,
+              "rwa_id": 102
+            },
+            {
+              "name": "Danaher tokenized stock (xStock)",
+              "symbol": "DHRX",
+              "crypto_id": 37036,
+              "rwa_id": 145
+            },
+            {
+              "name": "DFDV tokenized stock (xStock)",
+              "symbol": "DFDVx",
+              "crypto_id": 37037,
+              "rwa_id": 85
+            },
+            {
+              "name": "Eli Lilly tokenized stock (xStock)",
+              "symbol": "LLYX",
+              "crypto_id": 37038,
+              "rwa_id": 11
+            },
+            {
+              "name": "Exxon Mobil tokenized stock (xStock)",
+              "symbol": "XOMX",
+              "crypto_id": 37039,
+              "rwa_id": 27
+            },
+            {
+              "name": "Procter & Gamble tokenized stock (xStock)",
+              "symbol": "PGX",
+              "crypto_id": 37040,
+              "rwa_id": 50
+            },
+            {
+              "name": "Robinhood tokenized stock (xStock)",
+              "symbol": "HOODX",
+              "crypto_id": 37041,
+              "rwa_id": 84
+            },
+            {
+              "name": "Salesforce tokenized stock (xStock)",
+              "symbol": "CRMX",
+              "crypto_id": 37042,
+              "rwa_id": 198
+            },
+            {
+              "name": "Thermo Fisher tokenized stock (xStock)",
+              "symbol": "TMOX",
+              "crypto_id": 37043,
+              "rwa_id": 104
+            },
+            {
+              "name": "TQQQ tokenized ETF (xStock)",
+              "symbol": "TQQQX",
+              "crypto_id": 37044,
+              "rwa_id": 211
+            },
+            {
+              "name": "UnitedHealth tokenized stock (xStock)",
+              "symbol": "UNHX",
+              "crypto_id": 37045,
+              "rwa_id": 33
+            },
+            {
+              "name": "Visa tokenized stock (xStock)",
+              "symbol": "VX",
+              "crypto_id": 37046,
+              "rwa_id": 18
+            },
+            {
+              "name": "Vanguard tokenized ETF (xStock)",
+              "symbol": "VTIX",
+              "crypto_id": 37047,
+              "rwa_id": 148
+            },
+            {
+              "name": "Walmart tokenized stock (xStock)",
+              "symbol": "WMTX",
+              "crypto_id": 37048,
+              "rwa_id": 17
+            },
+            {
+              "name": "Linde tokenized stock (xStock)",
+              "symbol": "LINX",
+              "crypto_id": 37049,
+              "rwa_id": 61
+            },
+            {
+              "name": "Marvell tokenized stock (xStock)",
+              "symbol": "MRVLX",
+              "crypto_id": 37050,
+              "rwa_id": 70
+            },
+            {
+              "name": "Mastercard tokenized stock (xStock)",
+              "symbol": "MAX",
+              "crypto_id": 37051,
+              "rwa_id": 28
+            },
+            {
+              "name": "McDonald's tokenized stock (xStock)",
+              "symbol": "MCDX",
+              "crypto_id": 37052,
+              "rwa_id": 68
+            },
+            {
+              "name": "Medtronic tokenized stock (xStock)",
+              "symbol": "MDTX",
+              "crypto_id": 37053,
+              "rwa_id": 146
+            },
+            {
+              "name": "Merck tokenized stock (xStock)",
+              "symbol": "MRKX",
+              "crypto_id": 37054,
+              "rwa_id": 38
+            },
+            {
+              "name": "Meta tokenized stock (xStock)",
+              "symbol": "METAX",
+              "crypto_id": 37055,
+              "rwa_id": 10
+            },
+            {
+              "name": "Microsoft tokenized stock (xStock)",
+              "symbol": "MSFTX",
+              "crypto_id": 37056,
+              "rwa_id": 7
+            },
+            {
+              "name": "Nasdaq tokenized ETF (xStock)",
+              "symbol": "QQQX",
+              "crypto_id": 37057,
+              "rwa_id": 118
+            },
+            {
+              "name": "Novo Nordisk tokenized stock (xStock)",
+              "symbol": "NVOX",
+              "crypto_id": 37058,
+              "rwa_id": 65
+            },
+            {
+              "name": "Oracle tokenized stock (xStock)",
+              "symbol": "ORCLX",
+              "crypto_id": 37059,
+              "rwa_id": 24
+            },
+            {
+              "name": "Netflix tokenized stock (xStock)",
+              "symbol": "NFLXX",
+              "crypto_id": 37060,
+              "rwa_id": 37
+            },
+            {
+              "name": "Palantir tokenized stock (xStock)",
+              "symbol": "PLTRX",
+              "crypto_id": 37062,
+              "rwa_id": 53
+            },
+            {
+              "name": "Pfizer tokenized stock (xStock)",
+              "symbol": "PFEX",
+              "crypto_id": 37063,
+              "rwa_id": 92
+            },
+            {
+              "name": "PepsiCo tokenized stock (xStock)",
+              "symbol": "PEPX",
+              "crypto_id": 37064,
+              "rwa_id": 69
+            },
+            {
+              "name": "Philip Morris tokenized stock (xStock)",
+              "symbol": "PMX",
+              "crypto_id": 37065,
+              "rwa_id": 56
+            },
+            {
+              "name": "Wrapped Abbott tokenized stock (xStock)",
+              "symbol": "WABTX",
+              "crypto_id": 37095,
+              "rwa_id": 112
+            },
+            {
+              "name": "Wrapped Accenture Tokenized stock (xStock)",
+              "symbol": "WACNX",
+              "crypto_id": 37099,
+              "rwa_id": 136
+            },
+            {
+              "name": "Wrapped Amazon Tokenized stock (xStock)",
+              "symbol": "WAMZNX",
+              "crypto_id": 37112,
+              "rwa_id": 6
+            },
+            {
+              "name": "Wrapped AppLovin Tokenized stock (xStock)",
+              "symbol": "WAPPX",
+              "crypto_id": 37113,
+              "rwa_id": 108
+            },
+            {
+              "name": "Wrapped Pfizer Tokenized stock (xStock)",
+              "symbol": "WPFEX",
+              "crypto_id": 37115,
+              "rwa_id": 92
+            },
+            {
+              "name": "Wrapped Procter & Gamble Tokenized stock (xStock)",
+              "symbol": "WPGX",
+              "crypto_id": 37116,
+              "rwa_id": 50
+            },
+            {
+              "name": "Wrapped Chevron Tokenized stock (xStock)",
+              "symbol": "WCVXX",
+              "crypto_id": 37118,
+              "rwa_id": 51
+            },
+            {
+              "name": "Wrapped Danaher Tokenized stock (xStock)",
+              "symbol": "WDHRX",
+              "crypto_id": 37119,
+              "rwa_id": 145
+            },
+            {
+              "name": "Wrapped Gamestop Tokenized stock (xStock)",
+              "symbol": "WGMEX",
+              "crypto_id": 37120,
+              "rwa_id": 116
+            },
+            {
+              "name": "Wrapped Alphabet Tokenized stock (xStock)",
+              "symbol": "WGOOGLX",
+              "crypto_id": 37121,
+              "rwa_id": 4
+            },
+            {
+              "name": "Wrapped Broadcom Tokenized stock (xStock)",
+              "symbol": "WAVGOX",
+              "crypto_id": 37129,
+              "rwa_id": 13
+            },
+            {
+              "name": "Wrapped AstraZeneca Tokenized stock (xStock)",
+              "symbol": "WAZNX",
+              "crypto_id": 37183,
+              "rwa_id": 40
+            },
+            {
+              "name": "Wrapped Bank of America Tokenized stock (xStock)",
+              "symbol": "WBACX",
+              "crypto_id": 37190,
+              "rwa_id": 23
+            },
+            {
+              "name": "Wrapped Berkshire Hathaway Tokenized stock (xStock)",
+              "symbol": "WBRK.BX",
+              "crypto_id": 37191,
+              "rwa_id": 15
+            },
+            {
+              "name": "Wrapped Comcast Tokenized stock (xStock)",
+              "symbol": "WCMCSAX",
+              "crypto_id": 37192,
+              "rwa_id": 208
+            },
+            {
+              "name": "Wrapped Coinbase Tokenized stock (xStock)",
+              "symbol": "WCOINX",
+              "crypto_id": 37193,
+              "rwa_id": 82
+            },
+            {
+              "name": "Wrapped Salesforce Tokenized stock (xStock)",
+              "symbol": "WCRMX",
+              "crypto_id": 37194,
+              "rwa_id": 198
+            },
+            {
+              "name": "Wrapped CrowdStrike Tokenized stock (xStock)",
+              "symbol": "WCRWDX",
+              "crypto_id": 37195,
+              "rwa_id": 102
+            },
+            {
+              "name": "Wrapped Cisco Tokenized stock (xStock)",
+              "symbol": "WCSCOX",
+              "crypto_id": 37196,
+              "rwa_id": 29
+            },
+            {
+              "name": "Wrapped Goldman Sachs Tokenized stock (xStock)",
+              "symbol": "WGSX",
+              "crypto_id": 37197,
+              "rwa_id": 39
+            },
+            {
+              "name": "Wrapped Home Depot Tokenized stock (xStock)",
+              "symbol": "WHDX",
+              "crypto_id": 37198,
+              "rwa_id": 36
+            },
+            {
+              "name": "Wrapped Honeywell Tokenized stock (xStock)",
+              "symbol": "WHONX",
+              "crypto_id": 37199,
+              "rwa_id": null
+            },
+            {
+              "name": "Wrapped Robinhood Tokenized stock (xStock)",
+              "symbol": "WHOODX",
+              "crypto_id": 37200,
+              "rwa_id": 84
+            },
+            {
+              "name": "Wrapped Intel Tokenized stock (xStock)",
+              "symbol": "WINTCX",
+              "crypto_id": 37202,
+              "rwa_id": 20
+            },
+            {
+              "name": "Wrapped Johnson & Johnson Tokenized stock (xStock)",
+              "symbol": "WJNJX",
+              "crypto_id": 37203,
+              "rwa_id": 19
+            },
+            {
+              "name": "Wrapped JPMorgan Chase Tokenized stock (xStock)",
+              "symbol": "WJPMX",
+              "crypto_id": 37204,
+              "rwa_id": 16
+            },
+            {
+              "name": "Wrapped Coca-Cola Tokenized stock (xStock)",
+              "symbol": "WKOX",
+              "crypto_id": 37205,
+              "rwa_id": 34
+            },
+            {
+              "name": "Wrapped Eli Lilly Tokenized stock (xStock)",
+              "symbol": "WLLYX",
+              "crypto_id": 37207,
+              "rwa_id": 11
+            },
+            {
+              "name": "Wrapped Mastercard Tokenized stock (xStock)",
+              "symbol": "WMAX",
+              "crypto_id": 37208,
+              "rwa_id": 28
+            },
+            {
+              "name": "Wrapped McDonald's Tokenized stock (xStock)",
+              "symbol": "WMCDX",
+              "crypto_id": 37209,
+              "rwa_id": 68
+            },
+            {
+              "name": "Wrapped Medtronic Tokenized stock (xStock)",
+              "symbol": "WMDTX",
+              "crypto_id": 37210,
+              "rwa_id": 146
+            },
+            {
+              "name": "Wrapped Meta Tokenized stock (xStock)",
+              "symbol": "WMETAX",
+              "crypto_id": 37211,
+              "rwa_id": 10
+            },
+            {
+              "name": "Wrapped Merck Tokenized stock (xStock)",
+              "symbol": "WMRKX",
+              "crypto_id": 37212,
+              "rwa_id": 38
+            },
+            {
+              "name": "Wrapped Marvell Tokenized stock (xStock)",
+              "symbol": "WMRVLX",
+              "crypto_id": 37213,
+              "rwa_id": 70
+            },
+            {
+              "name": "Wrapped Microsoft Tokenized stock (xStock)",
+              "symbol": "WMSFTX",
+              "crypto_id": 37214,
+              "rwa_id": 7
+            },
+            {
+              "name": "Wrapped MicroStrategy Tokenized stock (xStock)",
+              "symbol": "WMSTRX",
+              "crypto_id": 37215,
+              "rwa_id": 114
+            },
+            {
+              "name": "Wrapped Netflix Tokenized stock (xStock)",
+              "symbol": "WNFLXX",
+              "crypto_id": 37216,
+              "rwa_id": 37
+            },
+            {
+              "name": "Wrapped Novo Nordisk Tokenized stock (xStock)",
+              "symbol": "WNVOX",
+              "crypto_id": 37217,
+              "rwa_id": 65
+            },
+            {
+              "name": "Wrapped Oracle Tokenized stock (xStock)",
+              "symbol": "WORCLX",
+              "crypto_id": 37218,
+              "rwa_id": 24
+            }
+          ],
+          "issuer_id": "6878977dcbbf471de3366e85",
+          "num_tokens": 1176,
+          "total_size": 1176,
+          "has_more": true
+        },
+        "status": {
+          "timestamp": "2026-09-08T22:16:45.006Z",
+          "error_code": "0",
+          "error_message": "",
+          "elapsed": 3,
+          "credit_count": 1
+        }
+      }
+    }
+  ]
+}

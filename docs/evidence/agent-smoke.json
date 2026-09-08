@@ -1,0 +1,79 @@
+{
+  "captured_at": "2026-09-08T22:21:22.937961+00:00",
+  "environment": "local release candidate",
+  "wallet": "disconnected; no transactions submitted",
+  "checks": [
+    {
+      "prompt": "When does the IXS rewards program run and when is the reward paid?",
+      "http_status": 200,
+      "response": {
+        "text": "The $IXS Vault Rewards window runs September 7 to September 21, 2026. Deposit $100 or more in USDC during that window and a dollar-denominated reward is locked in at the moment you deposit.\n\nPayout is 90 days after the window closes: December 21, 2026, paid automatically in $IXS, no claim needed. The token amount is set by the $IXS price on that date.\n\nA few things that matter:\n\n- Pool is capped at 500,000 $IXS, first come first served, and IXS can reduce or end the program early.\n- Withdraw before December 21 and you forfeit the unvested reward, though your principal and vault yield stay yours.\n- This reward is separate from the vault's own 6% target yield (5% trailing 12 months, per IXS as of September 2026). It's a promotional bonus paid in a volatile token, not guaranteed.\n- This applies to the Avalanche route this app executes on. If you're on BNB Chain, check its own terms and reward eligibility separately.\n\nWant me to size the reward tier for a specific deposit amount?",
+        "recoverable": false,
+        "action": null,
+        "actions": [],
+        "sources": [
+          "VaultTerms registry",
+          "VaultTerms registry \u00b7 1 of 26 vaults",
+          "VaultTerms registry \u00b7 IXS High Yield Corporate Bond Vault"
+        ],
+        "cmc_calls": []
+      }
+    },
+    {
+      "prompt": "Deposit 100 USDC into the IXS vault.",
+      "http_status": 200,
+      "response": {
+        "text": "No wallet is connected right now, so I can't draft that deposit request. Connect your wallet on Avalanche C-Chain and I'll propose the approval and the deposit request for 100 USDC right away.\n\nA couple of things to know before you do:\n\n- This is the permissionless agent route: no KYC, no whitelist, since deposits routed through an agent qualify.\n- Deposits are async: the approval and request go first, then an operator fulfils it, then you claim the shares. It won't land instantly.\n\nWant me to pull the vault's current target yield and TVL while you connect, so you have the numbers in front of you?",
+        "recoverable": false,
+        "action": null,
+        "actions": [],
+        "sources": [],
+        "cmc_calls": []
+      }
+    },
+    {
+      "prompt": "I'm in the EU with $1,000 and I'll do basic KYC. Which vaults will let me in?",
+      "http_status": 200,
+      "response": {
+        "text": "With $1,000 and basic KYC in the EU, you've got 14 registry entries you can access. Here's how they group:\n\nBasic KYC tier (need to verify identity):\n- Spiko money market funds (EU/US T-bills, min $1,000, EU only) reference reads unavailable right now\n- Ondo USDY (Treasury-backed note, EU admitted, no minimum), 3.56% reference pool rate\n- Midas mTBILL (tracks BlackRock's short Treasury ETF), 3.64% reference pool rate\n- Pax Gold and Tether Gold (physical gold, allocated)\n- Ondo Global Markets and xStocks (tokenized US stocks/ETFs, 1:1 backed)\n- Re Protocol (reinsurance premium yield, tranched), 6.66% reference pool rate\n- IXS High Yield Corporate Bond Vault, min $100, targets 6% against BlackRock's SHYG junk bond ETF, that's a target not a guarantee and SHYG's NAV can fall\n\nNo-KYC / wallet-only routes also open to you:\n- Hastra wYLDS/PRIME (Figure's consumer credit lending, HELOC and auto loans), 5.74% reference pool rate\n- Maple syrupUSDC/syrupUSDT (crypto-collateralized institutional lending), 5% reference pool rate\n- Aave Horizon (lending market against tokenized Treasuries/CLOs as collateral)\n- Ethena sUSDe and USDtb (basis trade and Treasury-backed stable respectively)\n\nAll the \"reference pool\" numbers are each project's largest DeFiLlama pool, not a verified rate for that specific product, so treat them as context only. I run the IXS vault here and I'm disclosing that upfront: it's agent-addressable at the contract level too, but the terms above are its verified KYC route. Want full terms on any of these?",
+        "recoverable": false,
+        "action": null,
+        "actions": [],
+        "sources": [
+          "VaultTerms registry \u00b7 14 of 26 vaults"
+        ],
+        "cmc_calls": []
+      }
+    },
+    {
+      "prompt": "What is the IXS combined TVL and its breakdown by chain?",
+      "http_status": 200,
+      "response": {
+        "text": "Combined TVL for the IXS High Yield Corporate Bond Vault is $4,753.14 as of 2026-09-08 22:14 UTC. This is a daily snapshot summing both chains' onchain balances, LIVE status.\n\nBreakdown:\n- Avalanche: $401.05\n- BNB Chain: $4,352.08\n\nBNB Chain currently holds the large majority of assets. The Avalanche-only figure is what this app's vault context reflects when you deposit here; the BNB side runs on a separate deployment.",
+        "recoverable": false,
+        "action": null,
+        "actions": [],
+        "sources": [
+          "VaultTerms registry",
+          "VaultTerms registry \u00b7 1 of 26 vaults"
+        ],
+        "cmc_calls": []
+      }
+    },
+    {
+      "prompt": "Is the displayed Ondo OUSG TVL and APY specific to that product?",
+      "http_status": 200,
+      "response": {
+        "text": "No, neither figure is specific to OUSG itself.\n\n- The TVL, about $2.55B as of Sep 8, 2026, is Ondo's total protocol TVL from DeFiLlama, not OUSG's individual balance. Ondo runs multiple products, so this overstates what's actually in OUSG.\n- The APY, 3.56%, is the yield from Ondo's largest DeFiLlama pool across the whole project, marked as a reference-pool figure, not a verified rate for OUSG specifically. OUSG's actual return comes from short-term Treasuries and money-market exposure (largely through BlackRock's BUIDL, plus Franklin Templeton and WisdomTree funds), so its real yield tracks T-bill rates, currently in that ballpark but not confirmed at 3.56% for this product.\n\nIf you want OUSG's own terms, minimum is $5,000, KYC tier is qualified purchaser, available to US, EU and rest of world at that tier or higher.",
+        "recoverable": false,
+        "action": null,
+        "actions": [],
+        "sources": [
+          "VaultTerms registry \u00b7 1 of 26 vaults"
+        ],
+        "cmc_calls": []
+      }
+    }
+  ],
+  "scope_recheck_at": "2026-09-08T22:34:08.958421+00:00"
+}

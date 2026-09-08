@@ -9,7 +9,7 @@ Built for the **#BuildwithCMC API Hackathon** (track: AI Agents and Automation).
 Ask in plain language:
 
 - *"I'm in the EU with $1,000 and I'll do basic KYC — which vaults will let me in?"* → the agent searches the VaultTerms registry (26 hand-verified RWA vaults: minimums, KYC tier, jurisdictions, redemption, fees) and answers with specific vaults, grouped by access.
-- *"Is tokenized NVDA trading at a premium to the real stock?"* → the agent calls the CoinMarketCap Real-World Assets API for the tokenized quote, its underlying on-chain tokens and the TradFi venue, and compares.
+- *"Is tokenized NVDA trading at a premium to the real stock?"* → the agent calls the CoinMarketCap Real-World Assets API for the tokenized quote and its per-issuer wrappers, and compares against the blended tokenized average. If no primary-exchange quote is returned, it says so.
 - *"Which issuers tokenize gold, and how big is each?"* → CMC issuer explorer + asset list.
 - *"Deposit 100 USDC"* → the agent drafts an ERC-7540 `requestDeposit` for the **IXS High Yield Corporate Bond vault** on Avalanche using `@ixswap1/vault-agent-sdk`; you confirm in your wallet. The agent never holds keys.
 
@@ -22,7 +22,7 @@ All under `https://pro-api.coinmarketcap.com` with the `X-CMC_PRO_API_KEY` heade
 | Endpoint | Used for |
 |---|---|
 | `GET /v5/real-world-assets/assets/list` | Top tokenized assets by type (`stock`, `commodity`, `currency`, `government_security`, `etf`, `real_estate`) — tokenized market cap, price, 24h volume |
-| `GET /v5/real-world-assets/quotes/latest` | Quote by ticker: tokenized aggregate values + underlying on-chain tokens + TradFi markets (premium/discount) |
+| `GET /v5/real-world-assets/quotes/latest` | Quote by ticker: tokenized aggregate values + underlying on-chain tokens + TradFi venue metadata when supplied; wrapper-vs-blended comparisons |
 | `GET /v5/real-world-assets/info` | Static metadata: issuer/company fields, description |
 | `GET /v5/real-world-assets/issuers/list` | Issuer explorer: every RWA token issuer CMC tracks with linked-token counts |
 | `GET /v5/real-world-assets/issuers` | One issuer with all its issued tokens |
@@ -47,6 +47,10 @@ browser ── wagmi/RainbowKit (Avalanche) ── your wallet signs
 - **Agent-first vault.** The IXS `ix7540v1` vault ([`0xaD01…8bD9`](https://snowtrace.io/address/0xaD01573b459805E3954398796203d830B57A8bD9)) is permissionless for agents; individuals taking the manual route use the permissioned KYC route at [v2.ixs.finance](https://v2.ixs.finance/).
 - **Data.** [VaultTerms registry](https://vaultterms.com/registry/vaults.enriched.json) (hand-verified, refreshed daily) + CoinMarketCap RWA API (live).
 
+## Combined IXS TVL
+
+The spotlight reads the daily VaultTerms onchain snapshot: `totalAssets()` on Avalanche plus BNB Chain, with USDC valued at $1, a per-chain breakdown, and a timestamp. A missing chain makes the combined total unavailable, not zero. The agent and wallet transaction builders still operate on Avalanche. BNB is linked as a separate available route; its terms and rewards must be checked there.
+
 ## Run it
 
 ```bash
@@ -57,9 +61,14 @@ npm run dev
 
 ## What the CMC API made possible — and where it got in the way
 
-**Made possible:** an issuer-centric view of RWAs (who tokenizes what, how many tokens) and a like-for-like tokenized-vs-TradFi price comparison that no yield aggregator offers. The `asset_type` filter gave us clean category sizing for stocks, commodities and ETFs — categories DeFi TVL trackers don't model at all.
+**Made possible:** an issuer-centric view of RWAs (who tokenizes what, how many tokens) and a comparison of issuer wrapper prices against CMC’s blended tokenized average. The `asset_type` filter gave us clean category sizing for stocks, commodities and ETFs — categories DeFi TVL trackers don't model at all.
 
-**Got in the way:** the RWA endpoints are asset-centric, not vault-centric — there is no yield/APY, no TVL, and no terms (minimums, KYC, redemption), so eligibility and yield still come from our own registry and DeFiLlama. `market-pairs/list` is Growth-tier only, so venue-level liquidity was out of reach on the hackathon Startup tier. Tokenized treasury *funds* (BUIDL, USDY) are underrepresented relative to tokenized equities. A `yield` field and a `vault`/`fund` asset type would make these endpoints the backbone of any RWA product.
+**Got in the way:** The quoted tokenized average is not a primary-exchange reference price, so we do not claim a verified premium to NASDAQ.  the RWA endpoints are asset-centric, not vault-centric — there is no yield/APY, no TVL, and no terms (minimums, KYC, redemption), so eligibility and yield still come from our own registry and DeFiLlama. `market-pairs/list` is Growth-tier only, so venue-level liquidity was out of reach on the hackathon Startup tier. Tokenized treasury *funds* (BUIDL, USDY) are underrepresented relative to tokenized equities. A `yield` field and a `vault`/`fund` asset type would make these endpoints the backbone of any RWA product.
+
+## Submission materials
+
+- [Draft submission and demo script](docs/submission-draft.md)
+- [Final check report](docs/final-checks-2026-09-08.md)
 
 ## Provenance and disclosure
 
