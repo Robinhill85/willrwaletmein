@@ -27,7 +27,7 @@ export const AGENT_TOOLS: Anthropic.Tool[] = [
           type: "string",
           enum: ["tokenized_treasuries", "private_credit", "corporate_bonds", "gold", "tokenized_stocks", "basis_yield", "reinsurance"],
         },
-        query: { type: "string", description: "Free-text match on name, issuer, tokens or underlying." },
+        query: { type: "string", description: "Keywords matched across name, issuer, tokens or underlying (all keywords must occur, in any order). Use a ticker or a short product name." },
       },
     },
   },
@@ -79,12 +79,12 @@ export async function runTool(name: string, input: Record<string, unknown>, cmcL
     case "vault_ledger_search": {
       const vaults = await loadRegistry();
       const q = input as EligibilityQuery & { query?: string };
-      const needle = (q.query ?? "").toLowerCase();
+      const keywords = (q.query ?? "").toLowerCase().trim().split(/\s+/).filter(Boolean);
       const hits = vaults
         .filter((v) => eligible(v, q))
         .filter((v) =>
-          !needle ||
-          [v.name, v.issuer, v.underlying, ...(v.tokens ?? [])].join(" ").toLowerCase().includes(needle),
+          keywords.every(word =>
+            [v.name, v.issuer, v.underlying, ...(v.tokens ?? [])].join(" ").toLowerCase().includes(word)),
         )
         .map(summarize);
       return {

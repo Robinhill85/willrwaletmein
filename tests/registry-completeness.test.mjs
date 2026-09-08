@@ -27,3 +27,12 @@ test('full terms are not cut off by the tool transport',async()=>{
  const {result}=await exportsObject.runTool('vault_terms',{id:longVault.id},[]);
  assert.equal(JSON.parse(result).risk_notes,longVault.risk_notes);
 });
+test('issuer and ticker match across separate fields in either order',async()=>{
+ fixture[0]={id:'ondo-ousg',name:'Ondo Short-Term US Government Treasuries',issuer:'Ondo Finance',tokens:['OUSG'],underlying:'Treasury funds'};
+ for(const query of ['Ondo OUSG','ousg ondo','  ONDO   OUSG  ']) {
+  const {result}=await exportsObject.runTool('vault_ledger_search',{query},[]);
+  assert.deepEqual(JSON.parse(result).vaults.map(v=>v.id),['ondo-ousg']);
+ }
+ const {result}=await exportsObject.runTool('vault_ledger_search',{query:'Ondo nonexistent'},[]);
+ assert.equal(JSON.parse(result).count,0);
+});
