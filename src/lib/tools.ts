@@ -88,7 +88,9 @@ export async function runTool(name: string, input: Record<string, unknown>, cmcL
         )
         .map(summarize);
       return {
-        result: compact({ count: hits.length, vaults: hits }, 9000),
+        // The registry is bounded (26 entries). Keep the complete shortlist:
+        // character truncation hid later matches while still claiming the full count.
+        result: JSON.stringify({ count: hits.length, vaults: hits }),
         source: `VaultTerms registry · ${hits.length} of ${vaults.length} vaults`,
       };
     }
@@ -96,7 +98,7 @@ export async function runTool(name: string, input: Record<string, unknown>, cmcL
       const vaults = await loadRegistry();
       const v = vaults.find((x) => x.id === input.id);
       if (!v) return { result: `No vault with id ${String(input.id)}`, source: "VaultTerms registry" };
-      return { result: compact({ ...v, ...summarize(v) }, 9000), source: `VaultTerms registry · ${v.id === "ixs-blackrock-hy-bond" ? IXS_VAULT_NAME : v.name}` };
+      return { result: JSON.stringify({ ...v, ...summarize(v) }), source: `VaultTerms registry · ${v.id === "ixs-blackrock-hy-bond" ? IXS_VAULT_NAME : v.name}` };
     }
     case "cmc_rwa_lookup": {
       try {
