@@ -35,7 +35,9 @@ export interface Vault {
   yield_profile?: { target_pct?: number; trailing_12m_pct?: number; guaranteed?: boolean; note?: string };
   promotions?: { name: string; badge?: string; window: { start: string; end: string }; mechanic: string; tiers?: unknown[]; caveats?: string }[];
   live?: { tvl_usd: number | null; apy_pct: number | null; as_of: string | null; apy_check_asksurf?: number;
-    tvl_source?: string; tvl_scope?: "combined" | "protocol" | "project_reference_pool"; tvl_method?: string; tvl_complete?: boolean;
+    tvl_source?: string; tvl_source_url?: string; tvl_scope?: "combined" | "protocol" | "project_reference_pool"; tvl_method?: string; tvl_complete?: boolean;
+    tvl_base_usd?: number; tvl_base_as_of?: string; tvl_step_usd?: number;
+    vault_tvl_usd?: number | null; vault_tvl_complete?: boolean; vault_tvl_as_of?: string | null;
     apy_scope?: "project_reference_pool"; apy_source?: string;
     tvl_chains?: { chain: string; contract: string; tvl_usd: number | null; as_of: string | null }[] };
   risk_notes: string;
@@ -122,7 +124,11 @@ export function summarize(v: Vault) {
     tvl_usd: v.live?.tvl_usd ?? null,
     tvl_scope: v.live?.tvl_scope ?? "source-reported",
     tvl_source: v.live?.tvl_source ?? "DeFiLlama via VaultTerms",
+    tvl_source_url: v.live?.tvl_source_url ?? null,
     tvl_method: v.live?.tvl_method ?? null,
+    tvl_base_usd: v.live?.tvl_base_usd ?? null,
+    vault_deposits_usd: v.live?.vault_tvl_usd ?? null,
+    vault_deposits_complete: v.live?.vault_tvl_complete ?? null,
     tvl_chains: v.live?.tvl_chains ?? null,
     tvl_status: dataStatus(v.live?.tvl_usd, v.live?.as_of ?? undefined, REGISTRY_MAX_AGE, Date.now()),
     tvl_updated_at: v.live?.as_of ?? null,

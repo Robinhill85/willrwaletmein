@@ -1,4 +1,5 @@
 export const IXS_VAULT_NAME = "IXS High Yield Corporate Bond Vault";
+export const IXS_TVL_SOURCE_URL = "https://app.rwa.io/project/ixs-finance";
 export const REGISTRY_MAX_AGE = 48 * 60 * 60_000;
 export const TERMS_MAX_AGE = 30 * 24 * 60 * 60_000;
 export const ONCHAIN_MAX_AGE = 5 * 60_000;

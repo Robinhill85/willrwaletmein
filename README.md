@@ -47,9 +47,9 @@ browser ── wagmi/RainbowKit (Avalanche) ── your wallet signs
 - **Agent-first vault.** The IXS `ix7540v1` vault ([`0xaD01…8bD9`](https://snowtrace.io/address/0xaD01573b459805E3954398796203d830B57A8bD9)) is permissionless for agents; individuals taking the manual route use the permissioned KYC route at [v2.ixs.finance](https://v2.ixs.finance/).
 - **Data.** [VaultTerms registry](https://vaultterms.com/registry/vaults.enriched.json) (hand-verified, refreshed daily) + CoinMarketCap RWA API (live).
 
-## Combined IXS TVL
+## IXS TVL
 
-The spotlight reads the daily VaultTerms onchain snapshot: `totalAssets()` on Avalanche plus BNB Chain, with USDC valued at $1, a per-chain breakdown, and a timestamp. A missing chain makes the combined total unavailable, not zero. The agent and wallet transaction builders still operate on Avalanche. BNB is linked as a separate available route; its terms and rewards must be checked there.
+The spotlight shows IXS protocol TVL, read from the VaultTerms registry: the [rwa.io](https://app.rwa.io/project/ixs-finance) protocol total (hand-verified reference, covers all IXS pools, not only these vaults) plus IXHYB vault deposits rounded down to $10k steps, so small deposits do not move the headline. The vault deposits themselves are a daily onchain snapshot of `totalAssets()` on Avalanche plus BNB Chain (USDC valued at $1) and are shown per chain underneath. A failed vault read keeps the protocol base and marks the vault deposits unavailable, never zero. The agent and wallet transaction builders still operate on Avalanche. BNB is linked as a separate available route; its terms and rewards must be checked there.
 
 ## Run it
 

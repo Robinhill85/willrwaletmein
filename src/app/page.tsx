@@ -19,7 +19,7 @@ import {
 import { AgentChat, type ProposedAction } from "@/components/AgentChat";
 import { OtherVaults } from "@/components/OtherVaults";
 import { DataMetric } from "@/components/DataMetric";
-import { formatTvlUsd, IXS_VAULT_NAME, REGISTRY_MAX_AGE, TERMS_MAX_AGE } from "@/lib/data-status";
+import { formatTvlUsd, IXS_TVL_SOURCE_URL, IXS_VAULT_NAME, REGISTRY_MAX_AGE, TERMS_MAX_AGE } from "@/lib/data-status";
 import { activePromo } from "@/lib/registry";
 import { useVaultRegistry, PUBLIC_REGISTRY_URL } from "@/lib/use-vault-registry";
 import { HowItWorks } from "@/components/HowItWorks";
@@ -43,7 +43,8 @@ export default function Home() {
   const registry = useVaultRegistry();
   const ixs = registry.data?.find(v => v.id === "ixs-blackrock-hy-bond");
   const promoBadge = ixs && !registry.isError ? activePromo(ixs)?.badge : null;
-  const combinedTvl = ixs?.live?.tvl_scope === "combined" && ixs.live.tvl_complete ? ixs.live.tvl_usd : null;
+  const protocolTvl = ixs?.live?.tvl_scope === "protocol" && ixs.live.tvl_complete ? ixs.live.tvl_usd : null;
+  const tvlSourceUrl = ixs?.live?.tvl_source_url ?? IXS_TVL_SOURCE_URL;
 
   const vault = { address: VAULT_ADDRESS, abi: vaultAbi } as const;
 
@@ -119,7 +120,7 @@ export default function Home() {
     assetAddress: assetAddress ?? null,
     assetSymbol: sym,
     totalAssets: tvl != null ? String(tvl) : null,
-    totalAssetsScope: "Avalanche execution vault only; for the combined product TVL across Avalanche and BNB Chain, read vault_terms.",
+    totalAssetsScope: "Avalanche execution vault deposits only; for the IXS protocol TVL (rwa.io base plus vault deposits) and the per-chain vault deposits, read vault_terms.",
     totalShares: totalSupply !== undefined ? formatUnits(totalSupply as bigint, shareDec) : null,
     connectedWallet: address ?? null,
     userAssetBalance: assetBalance !== undefined ? formatUnits(assetBalance as bigint, dec) : null,
@@ -205,8 +206,8 @@ export default function Home() {
           </div>
           <div className="md:text-right">
             <DataMetric label="Yield" value={ixs?.yield_profile?.target_pct} formatted={`${ixs?.yield_profile?.target_pct}%`} kind="estimated target · not guaranteed" source="VaultTerms" sourceUrl={PUBLIC_REGISTRY_URL} updatedAt={ixs?.verified_at} maxAge={TERMS_MAX_AGE} failed={registry.isError} loading={registry.isPending} />
-            <DataMetric label="Combined TVL" value={combinedTvl} formatted={combinedTvl == null ? undefined : formatTvlUsd(combinedTvl)} source="onchain · Avalanche + BNB" sourceUrl={PUBLIC_REGISTRY_URL} updatedAt={ixs?.live?.as_of ?? undefined} maxAge={REGISTRY_MAX_AGE} failed={registry.isError} loading={registry.isPending} kind="daily snapshot · USDC ≈ USD" />
-            {ixs?.live?.tvl_chains?.map(c => <div key={c.chain} className="text-[11px] muted mt-1">{c.chain}: {c.tvl_usd == null ? "Unavailable" : formatTvlUsd(c.tvl_usd)}</div>)}
+            <DataMetric label="IXS TVL" value={protocolTvl} formatted={protocolTvl == null ? undefined : formatTvlUsd(protocolTvl)} source="rwa.io · IXS protocol" sourceUrl={tvlSourceUrl} updatedAt={ixs?.live?.as_of ?? undefined} maxAge={REGISTRY_MAX_AGE} failed={registry.isError} loading={registry.isPending} kind="protocol TVL + vault deposits in $10k steps" />
+            {ixs?.live?.tvl_chains && <div className="text-[11px] muted mt-1">Vault deposits (onchain, daily): {ixs.live.tvl_chains.map(c => `${c.chain} ${c.tvl_usd == null ? "unavailable" : formatTvlUsd(c.tvl_usd)}`).join(" · ")}</div>}
             <div className="text-xs muted mt-1">$100 min</div>
             {(registry.isError || assetsRead.isError) && <button className="btn mt-2" onClick={() => { registry.refetch(); assetsRead.refetch(); }} disabled={registry.isFetching || assetsRead.isFetching}>Retry data</button>}
             <div className="text-[10px] font-mono muted break-all mt-1">{VAULT_ADDRESS}</div>
