@@ -4,14 +4,14 @@ export function HowItWorks() {
       <h2 className="h2" style={{ fontSize: 16 }}>How this agent works</h2>
       <ul className="space-y-2 list-disc pl-5" style={{ color: "#dde5ff" }}>
         <li>
-          <strong>Answers come from two sources, shown under every reply:</strong> the{" "}
+          <strong>Data answers draw on two sources, named below the reply:</strong> the{" "}
           <a href="https://vaultterms.com" target="_blank" rel="noopener noreferrer">VaultTerms registry</a> (hand-verified terms, KYC tiers, minimums, jurisdictions for the verified vault entries) and the{" "}
           <a href="https://coinmarketcap.com/api/documentation/pro-api-reference/real-world-assets" target="_blank" rel="noopener noreferrer">CoinMarketCap Real-World Assets API</a>{" "}
           (live tokenized prices, market caps, underlying tokens, TradFi venues, issuers).
         </li>
         <li>
           <strong>Non-custodial.</strong> The agent reads on-chain state and drafts ERC-7540 requests with{" "}
-          <a href="https://www.npmjs.com/package/@ixswap1/vault-agent-sdk" target="_blank" rel="noopener noreferrer">@ixswap1/vault-agent-sdk</a>; every transaction is signed in your own wallet. No key ever touches this site.
+          <a href="https://www.npmjs.com/package/@ixswap1/vault-agent-sdk" target="_blank" rel="noopener noreferrer">@ixswap1/vault-agent-sdk</a>; every transaction is signed in your own wallet. Your private key stays in your wallet.
         </li>
         <li>
           <strong>Agent-first by design.</strong> The IXS vault is permissionless for agents — this page&apos;s agent, or your own wired to your own signer. Individuals who prefer the manual route take the permissioned KYC route at{" "}

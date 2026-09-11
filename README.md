@@ -49,7 +49,7 @@ browser ── wagmi/RainbowKit (Avalanche) ── your wallet signs
 
 ## IXS TVL
 
-The spotlight shows IXS protocol TVL, read from the VaultTerms registry: the [rwa.io](https://app.rwa.io/project/ixs-finance) protocol total (hand-verified reference, covers all IXS pools, not only these vaults) plus IXHYB vault deposits rounded down to $10k steps, so small deposits do not move the headline. The vault deposits themselves are a daily onchain snapshot of `totalAssets()` on Avalanche plus BNB Chain (USDC valued at $1) and are shown per chain underneath. A failed vault read keeps the protocol base and marks the vault deposits unavailable, never zero. The agent and wallet transaction builders still operate on Avalanche. BNB is linked as a separate available route; its terms and rewards must be checked there.
+The spotlight shows IXS protocol TVL, read from the VaultTerms registry: the [rwa.io](https://app.rwa.io/project/ixs-finance) protocol total (hand-verified reference, covers all IXS pools, not only these vaults) plus the aggregate IXHYB vault contribution rounded down to the nearest $10,000 for headline display. Individual deposits start at $100 USDC; headline rounding is not a deposit-size restriction. The vault deposits themselves are a daily onchain snapshot of `totalAssets()` on Avalanche plus BNB Chain (USDC valued at $1) and are shown per chain underneath. A failed vault read keeps the protocol base and marks the vault deposits unavailable, never zero. The agent and wallet transaction builders still operate on Avalanche. BNB is linked as a separate available route; its terms and rewards must be checked there.
 
 ## Run it
 

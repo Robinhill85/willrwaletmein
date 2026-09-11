@@ -176,7 +176,7 @@ export default function Home() {
             <strong className="text-white">RWA yield is paid by the other economy:</strong> T-bill coupons, bond interest, insurance premiums, real loan repayments — cash flows that arrive whether crypto pumps or not, settled to your wallet onchain.
           </p>
           <p className="mt-3 muted text-sm">
-            So — will RWA let <em>you</em> in? Ask the agent. It reads the verified VaultTerms ledger and live CoinMarketCap RWA data, and it can deposit into the IXS vault for you.
+            So — will RWA let <em>you</em> in? Ask the agent. It reads the verified VaultTerms ledger and live CoinMarketCap RWA data, and it can draft an IXS vault deposit for you to sign.
           </p>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -206,9 +206,9 @@ export default function Home() {
           </div>
           <div className="md:text-right">
             <DataMetric label="Yield" value={ixs?.yield_profile?.target_pct} formatted={`${ixs?.yield_profile?.target_pct}%`} kind="estimated target · not guaranteed" source="VaultTerms" sourceUrl={PUBLIC_REGISTRY_URL} updatedAt={ixs?.verified_at} maxAge={TERMS_MAX_AGE} failed={registry.isError} loading={registry.isPending} />
-            <DataMetric label="IXS TVL" value={protocolTvl} formatted={protocolTvl == null ? undefined : formatTvlUsd(protocolTvl)} source="rwa.io · IXS protocol" sourceUrl={tvlSourceUrl} updatedAt={ixs?.live?.as_of ?? undefined} maxAge={REGISTRY_MAX_AGE} failed={registry.isError} loading={registry.isPending} kind="protocol TVL + vault deposits in $10k steps" />
-            {ixs?.live?.tvl_chains && <div className="text-[11px] muted mt-1">Vault deposits (onchain, daily): {ixs.live.tvl_chains.map(c => `${c.chain} ${c.tvl_usd == null ? "unavailable" : formatTvlUsd(c.tvl_usd)}`).join(" · ")}</div>}
-            <div className="text-xs muted mt-1">$100 min</div>
+            <DataMetric label="IXS TVL" value={protocolTvl} formatted={protocolTvl == null ? undefined : formatTvlUsd(protocolTvl)} source="rwa.io · IXS protocol" sourceUrl={tvlSourceUrl} updatedAt={ixs?.live?.as_of ?? undefined} maxAge={REGISTRY_MAX_AGE} failed={registry.isError} loading={registry.isPending} kind="protocol total · vault balances below" />
+            {ixs?.live?.tvl_chains && <div className="text-[11px] muted mt-1">Vault balances (onchain, daily): {ixs.live.tvl_chains.map(c => `${c.chain} ${c.tvl_usd == null ? "unavailable" : formatTvlUsd(c.tvl_usd)}`).join(" · ")}</div>}
+            <div className="text-xs muted mt-1">Deposit $100 USDC or more</div>
             {(registry.isError || assetsRead.isError) && <button className="btn mt-2" onClick={() => { registry.refetch(); assetsRead.refetch(); }} disabled={registry.isFetching || assetsRead.isFetching}>Retry data</button>}
             <div className="text-[10px] font-mono muted break-all mt-1">{VAULT_ADDRESS}</div>
           </div>
@@ -216,12 +216,12 @@ export default function Home() {
         <div className="grid sm:grid-cols-2 gap-2.5 mt-4">
           <div className="panel-deep p-3 text-[12.5px]" style={{ color: "#dde5ff" }}>
             <div className="k mb-1" style={{ color: "var(--accent2)" }}>For your AI agent</div>
-            Use any agent and any wallet — deposit through the ERC-7540 rail with one API call. The agent on this page is one such agent: it drafts, you sign.{" "}
+            Use a compatible agent and wallet to deposit through the ERC-7540 route. The agent on this page drafts the request; you sign it.{" "}
             <a href="https://vaults.ixs.finance/vaults/" target="_blank" rel="noopener noreferrer">Open the vault ↗</a>
           </div>
           <div className="panel-deep p-3 text-[12.5px]" style={{ color: "#dde5ff" }}>
             <div className="k mb-1" style={{ color: "var(--accent2)" }}>For you, manually</div>
-            The permissioned KYC route: a verified IXS account, deposit from $100, withdraw anytime (asynchronous, T+1).{" "}
+            The manual route requires a verified IXS account. Deposit $100 USDC or more and request a withdrawal at any time; settlement is asynchronous (T+1).{" "}
             <a href="https://v2.ixs.finance/" target="_blank" rel="noopener noreferrer">Verify and deposit ↗</a>
           </div>
         </div>

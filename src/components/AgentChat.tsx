@@ -17,15 +17,15 @@ interface ChatMessage {
 const ACTION_LABEL: Record<ProposedAction["action"], string> = {
   approve: "Approve allowance",
   requestDeposit: "Request deposit",
-  requestRedeem: "Request redeem",
+  requestRedeem: "Request redemption",
   claimDeposit: "Claim deposit",
-  claimRedeem: "Claim redeem",
+  claimRedeem: "Claim redemption",
 };
 
 const SUGGESTIONS = [
   "I'm in the EU with $1,000 and I'll do basic KYC — which vaults will let me in?",
   "What actually backs the IXS vault, and what's the catch?",
-  "Is tokenized NVDA trading at a premium to the real stock right now?",
+  "How do tokenized NVDA prices compare across issuers?",
   "Which issuers tokenize gold, and how big is each?",
   "Deposit 100 USDC into the IXS vault",
 ];
@@ -43,7 +43,7 @@ export function AgentChat({
     {
       role: "assistant",
       content:
-        "I'm your agent. Two things I can do:\n\n1. Answer anything about real-world-asset vaults: which ones will let you in, on what terms, and what actually backs them.\n2. Deposit directly into the IXS vault, the first agent-addressable RWA vault (from $100 USDC on Avalanche). Connect your wallet, then tell me the amount here in the chat and I'll draft it for you to sign.\n\nVault terms come from vaultterms.com, live market data from CoinMarketCap. I never hold keys.",
+        "I'm your agent. Two things I can do:\n\n1. Answer anything about real-world-asset vaults: which ones will let you in, on what terms, and what actually backs them.\n2. Draft a deposit of $100 USDC or more into the IXS vault on Avalanche. Connect your wallet, then tell me the amount here in the chat and I'll draft it for you to sign.\n\nVault terms come from vaultterms.com, live market data from CoinMarketCap. I never hold keys.",
     },
   ]);
   const [input, setInput] = useState("");
