@@ -34,7 +34,7 @@ CMC made issuer discovery and live wrapper-price comparisons possible. Its RWA e
 
 ## Original work and shared components
 
-The app began with IXS's MIT-licensed sample vault agent, attributed in the repository. The CMC client and tools, VaultTerms integration and conversational experience were added for this event, starting on 3 September 2026. VaultTerms is a separate RWA-track entry and supplies the shared terms registry. This entry demonstrates the conversational tool workflow and wallet-confirmed proposals. IXS is a client of the author.
+The app began with IXS's MIT-licensed sample vault agent, attributed in the repository. The CMC client and tools, VaultTerms integration and conversational experience were added for this event, starting on 3 September 2026. VaultTerms is a separate RWA-track entry and supplies the shared terms registry. This entry demonstrates the conversational tool workflow and wallet-confirmed proposals.
 
 ## Demo script: about 110 seconds
 

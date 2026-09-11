@@ -306,7 +306,7 @@ export default function Home() {
           <strong className="text-white">This is information, not advice.</strong> Yields are targets or trailing figures — they vary and can be negative. Terms verified against issuer documents; issuers change terms without telling us. The agent drafts transactions; you sign them; verify the vault contract yourself before depositing real funds.
         </p>
         <p>
-          Every vault here — including our client IXS&apos;s — is held to the same verified-terms standard. · Data: VaultTerms registry + CoinMarketCap Real-World Assets API · vault execution via @ixswap1/vault-agent-sdk · #BuildwithCMC
+          Every vault here is held to the same verified-terms standard. · Data: VaultTerms registry + CoinMarketCap Real-World Assets API · vault execution via @ixswap1/vault-agent-sdk · #BuildwithCMC
         </p>
         <nav aria-label="Footer" className="flex flex-wrap gap-4">
           <a href="#privacy">Privacy</a><a href="#terms">Terms</a><a href="https://github.com/Robinhill85/willrwaletmein/issues" target="_blank" rel="noopener noreferrer">Support ↗</a>

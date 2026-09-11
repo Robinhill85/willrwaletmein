@@ -70,9 +70,9 @@ npm run dev
 - [Draft submission and demo script](docs/submission-draft.md)
 - [Final check report](docs/final-checks-2026-09-08.md)
 
-## Provenance and disclosure
+## Source attribution
 
-This repo was seeded from IXS's MIT-licensed [`ixs-sample-vault-agent`](https://github.com/gericix/ixs-sample-vault-agent) (first commit, attributed). Everything after that commit — the CoinMarketCap integration, the VaultTerms tools, the agent loop, and the site — was built for this hackathon. IXS is a client of the author; the registry holds its vault to the same verified-terms standard as every other vault.
+This repo was seeded from IXS's MIT-licensed [`ixs-sample-vault-agent`](https://github.com/gericix/ixs-sample-vault-agent) (first commit, attributed). Everything after that commit — the CoinMarketCap integration, the VaultTerms tools, the agent loop, and the site — was built for this hackathon. The registry applies the same verified-terms standard to every vault.
 
 **This is information, not advice.** Yields are targets or trailing figures and can be negative. Verify the vault contract yourself before depositing real funds. Not audited.
 

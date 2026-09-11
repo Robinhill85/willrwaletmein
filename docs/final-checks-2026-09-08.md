@@ -43,4 +43,4 @@ This was a targeted functional/data release review, not an exhaustive accessibil
 - `dab31f8`: current rewards terms.
 - `b3487dc`: combined TVL display, data-scope labels and answer guidance.
 
-The final scope recheck found OUSG and described both metric scopes correctly. Model wording remains variable: rehearse the exact demo and describe the author as IXS’s growth partner, not the vault operator.
+The final scope recheck found OUSG and described both metric scopes correctly. Model wording remains variable: rehearse the exact demo and describe the site as an interface for researching vaults and drafting transactions.
