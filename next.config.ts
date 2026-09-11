@@ -1,9 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // RainbowKit's Coinbase connector optionally pulls in @coinbase/cdp-sdk's
-  // x402/Solana payment code, whose subpackages aren't installed. We don't
-  // use that path (EVM-only vault), so keep it external instead of bundling.
+  poweredByHeader: false,
+  async headers() {
+    return [{ source: "/:path*", headers: [
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "X-Frame-Options", value: "DENY" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      { key: "Content-Security-Policy", value: "frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'" },
+      { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+    ] }, { source: "/api/:path*", headers: [{ key: "Cache-Control", value: "no-store" }] }];
+  },
 };
 
 export default nextConfig;

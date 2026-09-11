@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ProposedVaultAction } from "@ixswap1/vault-agent-sdk";
 import { Markdown } from "./Markdown";
+import { validProposal } from "@/lib/action-safety";
 
 export type ProposedAction = ProposedVaultAction;
 
@@ -12,6 +13,7 @@ interface ChatMessage {
   actions?: ProposedAction[];
   sent?: number[];
   sources?: string[];
+  wallet?: unknown;
 }
 
 const ACTION_LABEL: Record<ProposedAction["action"], string> = {
@@ -36,7 +38,7 @@ export function AgentChat({
   canPropose,
 }: {
   vaultContext: Record<string, unknown>;
-  onConfirmAction: (action: ProposedAction) => void;
+  onConfirmAction: (action: ProposedAction) => boolean;
   canPropose: boolean;
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -61,14 +63,17 @@ export function AgentChat({
   }, [messages, isLoading]);
 
   function toHistory(msgs: ChatMessage[]) {
-    return msgs.map((m) => ({
+    const history = msgs.slice(-16).map((m) => ({
       role: m.role,
-      content:
+      content: (
         m.content ||
         (m.actions?.length
           ? m.actions.map((a) => `[Proposed ${ACTION_LABEL[a.action]}${a.amount ? ` of ${a.amount}` : ""}: ${a.reasoning}]`).join(" ")
-          : ""),
-    }));
+          : "")
+      ).slice(0, 6000),
+    })).filter(m => m.content.trim());
+    while (history.reduce((n, m) => n + m.content.length, 0) > 24000) history.shift();
+    return history;
   }
 
   async function send(preset?: string, retry?: ChatMessage[]) {
@@ -99,7 +104,7 @@ export function AgentChat({
       }
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: data.text ?? "", actions: data.actions?.length ? data.actions : data.action ? [data.action] : undefined, sources: data.sources ?? [] },
+        { role: "assistant", content: data.text ?? "", actions: (Array.isArray(data.actions) ? data.actions : data.action ? [data.action] : []).filter(validProposal), sources: data.sources ?? [], wallet: vaultContext.connectedWallet },
       ]);
     } catch (err) {
       setError(controller.signal.aborted
@@ -115,7 +120,7 @@ export function AgentChat({
   }
 
   function confirm(index: number, k: number, action: ProposedAction) {
-    onConfirmAction(action);
+    if (messages[index].wallet !== vaultContext.connectedWallet || !onConfirmAction(action)) return;
     setMessages((prev) => prev.map((m, i) => (i === index ? { ...m, sent: [...(m.sent ?? []), k] } : m)));
   }
   function dismiss(index: number, k: number) {
@@ -158,13 +163,13 @@ export function AgentChat({
                   <p className="text-xs muted">Sent to your wallet — watch the transaction status in the side panel.</p>
                 ) : (
                   <div className="flex gap-2 pt-1">
-                    <button className="btn btn-accent" onClick={() => confirm(i, k, a)} disabled={!canPropose}>
+                    <button className="btn btn-accent" onClick={() => confirm(i, k, a)} disabled={!canPropose || m.wallet !== vaultContext.connectedWallet}>
                       Confirm in wallet
                     </button>
                     <button className="btn" onClick={() => dismiss(i, k)}>Dismiss</button>
                   </div>
                 )}
-                {!canPropose && <p className="text-xs down">Connect a wallet to confirm this.</p>}
+                {(!canPropose || m.wallet !== vaultContext.connectedWallet) && <p className="text-xs down">Use the wallet this proposal was prepared for, on Avalanche, and wait for any pending transaction.</p>}
               </div>
             ))}
           </div>
@@ -188,6 +193,7 @@ export function AgentChat({
           aria-label="Message your agent"
           placeholder="Ask about any vault, or tell me what to do…"
           value={input}
+          maxLength={6000}
           disabled={isLoading}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {

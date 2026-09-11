@@ -1,20 +1,17 @@
 "use client";
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { formatUnits, parseUnits, type Address } from "viem";
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatUnits, type Address } from "viem";
+import { avalanche } from "wagmi/chains";
+import { safeAmount, buildSafeAction } from "@/lib/action-safety";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import {
   vaultAbi,
   erc20Abi,
   KNOWN_VAULTS,
   fetchLatestRequestIds,
-  buildApproveTx,
-  buildRequestDepositTx,
-  buildRequestRedeemTx,
-  buildClaimDepositTx,
-  buildClaimRedeemTx,
 } from "@ixswap1/vault-agent-sdk";
 import { AgentChat, type ProposedAction } from "@/components/AgentChat";
 import { OtherVaults } from "@/components/OtherVaults";
@@ -37,16 +34,18 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 export default function Home() {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
+  const [actionError, setActionError] = useState<string | null>(null);
   const [depositAmount, setDepositAmount] = useState("");
   const [redeemAmount, setRedeemAmount] = useState("");
+  const queryClient = useQueryClient();
   const registry = useVaultRegistry();
   const ixs = registry.data?.find(v => v.id === "ixs-blackrock-hy-bond");
   const promoBadge = ixs && !registry.isError ? activePromo(ixs)?.badge : null;
   const protocolTvl = ixs?.live?.tvl_scope === "protocol" && ixs.live.tvl_complete ? ixs.live.tvl_usd : null;
   const tvlSourceUrl = ixs?.live?.tvl_source_url ?? IXS_TVL_SOURCE_URL;
 
-  const vault = { address: VAULT_ADDRESS, abi: vaultAbi } as const;
+  const vault = { address: VAULT_ADDRESS, abi: vaultAbi, chainId: avalanche.id } as const;
 
   const { data: name } = useReadContract({ ...vault, functionName: "name" });
   const { data: symbol } = useReadContract({ ...vault, functionName: "symbol" });
@@ -90,7 +89,7 @@ export default function Home() {
     query: { enabled: !!address && !!requestIds?.redeemFinalizedId },
   });
 
-  const assetToken = { address: assetAddress as Address | undefined, abi: erc20Abi } as const;
+  const assetToken = { address: assetAddress as Address | undefined, abi: erc20Abi, chainId: avalanche.id } as const;
   const { data: assetSymbol } = useReadContract({ ...assetToken, functionName: "symbol", query: { enabled: !!assetAddress } });
   const { data: assetDecimals } = useReadContract({ ...assetToken, functionName: "decimals", query: { enabled: !!assetAddress } });
   const { data: assetBalance } = useReadContract({
@@ -101,7 +100,14 @@ export default function Home() {
   });
 
   const { writeContract, data: txHash, isPending, error: writeError } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash: txHash });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash: txHash, chainId: avalanche.id });
+
+  useEffect(() => {
+    if (isConfirmed) {
+      void queryClient.invalidateQueries({ queryKey: ["readContract"] });
+      void queryClient.invalidateQueries({ queryKey: ["vault-request-ids"] });
+    }
+  }, [isConfirmed, txHash, queryClient]);
 
   const dec = typeof assetDecimals === "number" ? assetDecimals : 18;
   const shareDec = typeof decimals === "number" ? decimals : 18;
@@ -132,29 +138,26 @@ export default function Home() {
     userClaimableRedeem: claimableRedeem !== undefined ? formatUnits(claimableRedeem as bigint, dec) : null,
   };
 
-  const needsApproval =
-    allowance !== undefined && depositAmount && parseUnits(depositAmount || "0", dec) > (allowance as bigint);
+  const depositUnits = safeAmount(depositAmount, assetDecimals);
+  const redeemUnits = safeAmount(redeemAmount, decimals);
+  const needsApproval = typeof allowance === "bigint" && depositUnits !== null && depositUnits > allowance;
+  const canTransact = isConnected && chainId === avalanche.id && !isPending && !isConfirming;
 
   // Every write builds its unsigned tx via the SDK, then hands it to wagmi's
   // writeContract — the SDK never signs anything itself.
   function handleAgentAction(p: ProposedAction) {
-    if (!address) return;
-    switch (p.action) {
-      case "approve":
-        if (assetAddress && p.amount) writeContract(buildApproveTx(VAULT_CONFIG, assetAddress as Address, p.amount, dec));
-        break;
-      case "requestDeposit":
-        if (p.amount) writeContract(buildRequestDepositTx(VAULT_CONFIG, address, p.amount, dec));
-        break;
-      case "requestRedeem":
-        if (p.amount) writeContract(buildRequestRedeemTx(VAULT_CONFIG, address, p.amount, shareDec));
-        break;
-      case "claimDeposit":
-        if (claimableDeposit !== undefined) writeContract(buildClaimDepositTx(VAULT_CONFIG, address, claimableDeposit as bigint));
-        break;
-      case "claimRedeem":
-        if (claimableRedeem !== undefined) writeContract(buildClaimRedeemTx(VAULT_CONFIG, address, claimableRedeem as bigint));
-        break;
+    setActionError(null);
+    try {
+      const tx = buildSafeAction(p, {
+        address, chainId, busy: isPending || isConfirming, assetAddress,
+        assetDecimals, shareDecimals: decimals, assetBalance, shareBalance,
+        allowance, claimableDeposit, claimableRedeem,
+      });
+      writeContract(tx);
+      return true;
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "Cannot prepare this transaction.");
+      return false;
     }
   }
 
@@ -229,7 +232,7 @@ export default function Home() {
 
       {/* Agent + position */}
       <section className="grid lg:grid-cols-[minmax(0,1fr)_20rem] gap-6 items-start">
-        <AgentChat vaultContext={vaultContext} onConfirmAction={handleAgentAction} canPropose={isConnected} />
+        <div><AgentChat vaultContext={vaultContext} onConfirmAction={handleAgentAction} canPropose={canTransact} />{actionError && <p role="alert" className="text-sm down mt-2">{actionError}</p>}</div>
 
         <div className="space-y-3">
           <div className="panel p-4 space-y-3">
@@ -250,20 +253,21 @@ export default function Home() {
             <div className="panel p-4 space-y-3">
               <h2 className="h2" style={{ fontSize: 15 }}>Direct helpers</h2>
               <p className="text-xs muted">Same on-chain calls the agent proposes — no need to ask.</p>
+              {chainId !== avalanche.id && <p className="text-xs down">Switch your wallet to Avalanche to continue.</p>}
               <div className="flex gap-2">
                 <input className="input" placeholder={`Amount (${sym})`} value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
                 {needsApproval ? (
-                  <button className="btn btn-accent" onClick={() => assetAddress && writeContract(buildApproveTx(VAULT_CONFIG, assetAddress as Address, depositAmount || "0", dec))} disabled={isPending || isConfirming}>Approve</button>
+                  <button className="btn btn-accent" onClick={() => handleAgentAction({ action: "approve", amount: depositAmount, reasoning: "Direct helper" })} disabled={!canTransact || depositUnits === null}>Approve</button>
                 ) : (
-                  <button className="btn btn-accent" onClick={() => address && writeContract(buildRequestDepositTx(VAULT_CONFIG, address, depositAmount || "0", dec))} disabled={isPending || isConfirming || !depositAmount}>Deposit</button>
+                  <button className="btn btn-accent" onClick={() => handleAgentAction({ action: "requestDeposit", amount: depositAmount, reasoning: "Direct helper" })} disabled={!canTransact || depositUnits === null || typeof allowance !== "bigint"}>Deposit</button>
                 )}
               </div>
               <div className="flex gap-2">
                 <input className="input" placeholder="Shares to redeem" value={redeemAmount} onChange={(e) => setRedeemAmount(e.target.value)} />
-                <button className="btn" onClick={() => address && writeContract(buildRequestRedeemTx(VAULT_CONFIG, address, redeemAmount || "0", shareDec))} disabled={isPending || isConfirming || !redeemAmount}>Redeem</button>
+                <button className="btn" onClick={() => handleAgentAction({ action: "requestRedeem", amount: redeemAmount, reasoning: "Direct helper" })} disabled={!canTransact || redeemUnits === null}>Redeem</button>
               </div>
               {claimableDeposit !== undefined && (claimableDeposit as bigint) > 0n && (
-                <button className="btn btn-accent w-full" onClick={() => address && writeContract(buildClaimDepositTx(VAULT_CONFIG, address, claimableDeposit as bigint))} disabled={isPending || isConfirming}>
+                <button className="btn btn-accent w-full" onClick={() => handleAgentAction({ action: "claimDeposit", reasoning: "Direct helper" })} disabled={!canTransact}>
                   Claim {formatUnits(claimableDeposit as bigint, dec)} {sym} deposit
                 </button>
               )}

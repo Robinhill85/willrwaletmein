@@ -32,5 +32,9 @@
     "eslint-config-next": "16.3.4",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "axios": "^1.20.0",
+    "ws@^8.0.0": "^8.21.3"
   }
 }
