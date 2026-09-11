@@ -33,6 +33,7 @@ export type CmcCall = {
 // instance the agent often asks the same thing twice in a conversation.
 const cache = new Map<string, { at: number; body: unknown }>();
 const TTL_MS = 60_000;
+const MAX_CACHE_ENTRIES = 200;
 
 export class CmcError extends Error {
   constructor(message: string, public status: number) {
@@ -81,7 +82,11 @@ export async function cmcGet<T = unknown>(
       res.status,
     );
   }
-  cache.set(cacheKey, { at: Date.now(), body });
+  // Expired or varied ticker lookups must not grow a warm instance forever.
+  const now = Date.now();
+  for (const [entryKey, entry] of cache) if (now - entry.at >= TTL_MS) cache.delete(entryKey);
+  if (!cache.has(cacheKey) && cache.size >= MAX_CACHE_ENTRIES) cache.delete(cache.keys().next().value!);
+  cache.set(cacheKey, { at: now, body });
   return body as T;
 }
 

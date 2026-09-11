@@ -6,7 +6,7 @@ Reviewed 11 September 2026. This is an application review, not a security certif
 
 Production Vercel Firewall limits `/api/agent` and its path variants to 20 requests per IP per 10 minutes. The route also has a per-instance burst guard of 10 validated requests per minute, a 48 KiB body limit, bounded chat history and same-origin browser checks. Origin checks do not authenticate non-browser callers; the firewall is the distributed abuse control.
 
-The model has bounded output, iterations and execution time. Client-supplied vault context is untrusted user data, never system instructions. These controls reduce abuse; an account-level Anthropic spend limit is still needed to cap costs from distributed callers. The firewall rule is deployment configuration, not recreated by cloning the repository.
+The model has bounded output, iterations and execution time. The market-data cache evicts expired entries and holds at most 200 responses. Client-supplied vault context is untrusted user data, never system instructions. These controls reduce abuse; an account-level Anthropic spend limit is still needed to cap costs from distributed callers. The firewall rule is deployment configuration, not recreated by cloning the repository. Its deny action returns HTTP 403; the chat displays a retry message instead of the firewall's raw error object.
 
 ## Wallet actions
 

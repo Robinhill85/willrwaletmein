@@ -97,7 +97,7 @@ export function AgentChat({
         body: JSON.stringify({ messages: toHistory(next), vaultContext }),
       });
       const data = await res.json().catch(() => null);
-      if (!res.ok || !data) throw new Error(data?.error ?? "The agent is temporarily unavailable.");
+      if (!res.ok || !data) throw new Error(typeof data?.error === "string" ? data.error : [403, 429].includes(res.status) ? "This connection reached the request limit. Please wait up to 10 minutes and retry." : "The agent is temporarily unavailable.");
       if (data.recoverable) {
         setError("Some ledger or CMC data could not be fetched. You can retry this question.");
         setRetryMessages(next);
