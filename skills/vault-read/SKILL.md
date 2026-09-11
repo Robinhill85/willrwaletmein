@@ -1,6 +1,6 @@
 ---
 name: vault.read
-description: Read live on-chain state for the ix7540v1 ERC-7540 vault — TVL, share supply, and a connected wallet's balances and pending/claimable request amounts.
+description: Read live on-chain state for the ix7540v1 ERC-7540 vault — Avalanche vault assets, share supply, and a connected wallet's balances and pending/claimable request amounts.
 reference: https://api-v2.ixs.finance/docs#/skills
 implementation: "@ixswap1/vault-agent-sdk" readVaultState / readUserPosition (https://www.npmjs.com/package/@ixswap1/vault-agent-sdk)
 ---
@@ -20,7 +20,7 @@ Reads the vault's public state via `viem` against Avalanche C-Chain — no walle
 | --- | --- |
 | `name`, `symbol`, `decimals` | Vault token metadata |
 | `asset` | Underlying ERC-20 asset address |
-| `totalAssets`, `totalSupply` | Vault TVL and share supply |
+| `totalAssets`, `totalSupply` | Avalanche vault assets and share supply |
 | `balanceOf(account)` | User's share balance |
 | `pendingDepositRequest(requestId, account)` | User's unfulfilled deposit request, in asset units |
 | `claimableDepositRequest(requestId, account)` | User's fulfilled deposit awaiting claim, in asset units |
@@ -31,3 +31,5 @@ Reads the vault's public state via `viem` against Avalanche C-Chain — no walle
 ## Notes
 
 The vault is ERC-7540 (async): a `requestDeposit` does not immediately mint shares. The operator must fulfill the request before it becomes claimable — see `vault.proposeAction`.
+
+These reads cover the Avalanche execution vault only. The website’s protocol TVL and BNB vault balance come from the separately sourced VaultTerms registry.

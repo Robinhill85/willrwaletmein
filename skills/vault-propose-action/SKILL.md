@@ -23,11 +23,13 @@ A Claude tool (`propose_vault_action`) exposed to the model on `/api/agent`. The
 
 1. User sends a message ("redeem 100 shares").
 2. Claude, given current `vault.context`, decides whether to call this tool.
-3. The API route returns `{ text, action }` — `action` is the parsed tool input, or `null` if no action was proposed.
-4. The client renders `action` as a confirm/dismiss card (`src/components/AgentChat.tsx`).
-5. On confirm, the client calls the SDK's matching `build*Tx` function (e.g. `buildRequestRedeemTx`) to get unsigned call data, then hands it straight to wagmi's `writeContract` (`src/app/page.tsx` → `handleAgentAction`) — the connected wallet (MetaMask, etc.) prompts for signature exactly as it would for any other transaction. This is the same `build*Tx` call the "Request deposit" / "Request redeem" manual forms use.
+3. The API route returns `text` and an `actions` array; `action` remains the first proposal (or `null`) for compatibility.
+4. The client renders each proposal as a confirmation card (`src/components/AgentChat.tsx`).
+5. On confirm, the client calls the SDK's matching `build*Tx` function (e.g. `buildRequestRedeemTx`) to get unsigned call data, then hands it straight to wagmi's `writeContract` (`src/app/page.tsx` → `handleAgentAction`) — the connected wallet (MetaMask, etc.) prompts for signature exactly as it would for any other transaction. This is the same `build*Tx` call the "Deposit" / "Redeem" manual helpers use.
 
 ## Guardrails
 
 - The tool is advisory-only by construction: this skill has no signer, no private key, and no path to broadcast a transaction on its own. Step 5 is the only place a transaction actually leaves the browser, and it always requires a wallet-native user confirmation.
 - The API route does not trust the model's judgment on connection state as the sole gate — the UI additionally disables Confirm client-side when no wallet is connected (`canPropose` prop).
+
+IXS deposits start at $100 USDC and may be any amount above that minimum. The displayed protocol total’s rounding convention does not restrict individual deposit sizes.

@@ -5,11 +5,11 @@ import { Providers } from "./providers";
 export const metadata: Metadata = {
   title: "Will RWA let me in? — an agent for real-world-asset yield",
   description:
-    "Yield that doesn't need a bull market. Ask the agent which RWA vaults will actually let you in — powered by CoinMarketCap RWA data and the VaultTerms registry — and deposit into the IXS agent-first vault from your own wallet.",
+    "Yield that doesn't need a bull market. Ask the agent which RWA vaults will actually let you in — powered by CoinMarketCap RWA data and the VaultTerms registry — and draft an IXS vault deposit of $100 USDC or more for you to sign in your wallet.",
   metadataBase: new URL("https://willrwaletmein.com"),
   openGraph: {
     title: "Will RWA let me in?",
-    description: "Yield that doesn't need a bull market. The agent that answers — and can deposit for you.",
+    description: "Research RWA vaults with live market data and verified terms. Draft IXS deposits from $100 USDC for your wallet to sign.",
     images: ["/hero.jpg"],
   },
 };

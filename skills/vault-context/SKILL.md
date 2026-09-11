@@ -21,6 +21,7 @@ Runs client-side after `vault.read` resolves (now via `@ixswap1/vault-agent-sdk`
   "assetAddress": "string | null",
   "assetSymbol": "string | null",
   "totalAssets": "string | null",
+  "totalAssetsScope": "Avalanche execution vault only",
   "totalShares": "string | null",
   "connectedWallet": "string | null",
   "userAssetBalance": "string | null",
@@ -37,3 +38,5 @@ Runs client-side after `vault.read` resolves (now via `@ixswap1/vault-agent-sdk`
 ## Why this exists as its own skill
 
 Separating "what's true right now" (this skill) from "what should we do about it" (`vault.proposeAction`) keeps the read path free of side effects and lets either be swapped independently — e.g. a future version could source this from an indexer instead of direct RPC reads without touching the agent route.
+
+`totalAssets` is the Avalanche vault balance, not the protocol headline. The agent reads protocol TVL and per-chain vault balances from VaultTerms.

@@ -1,6 +1,8 @@
 # Final checks — Will RWA let me in?
 
-Checked 8 September 2026. Local release candidate on `fix/submission-checks-2026-09-08`; production has not been updated by this task. Public repo and deployed homepage were reachable. Framework: Next.js 16.3.4 / React 19.2.8.
+> Historical review. Figures, wording and deployment status below describe the review at that time. See the [11 September release](release-2026-09-11.md) and [current submission plan](submission-plan.md) for the final published version.
+
+Checked 8 September 2026 against the then-local candidate on `fix/submission-checks-2026-09-08`. Production had not yet been updated at the time of that review. Public repo and deployed homepage were reachable. Framework: Next.js 16.3.4 / React 19.2.8.
 
 ## Findings and fixes
 

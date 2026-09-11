@@ -1,6 +1,6 @@
 # Will RWA let me in? — willrwaletmein.com
 
-**An agent that answers the only question that matters about real-world-asset yield — "will they let *me* in?" — with CoinMarketCap RWA data and hand-verified vault terms, and then deposits into the IXS agent-first vault from your own wallet.**
+**An agent that answers the only question that matters about real-world-asset yield — "will they let *me* in?" — with CoinMarketCap RWA data and hand-verified vault terms, and drafts IXS vault deposits of $100 USDC or more for you to sign in your own wallet.**
 
 Built for the **#BuildwithCMC API Hackathon** (track: AI Agents and Automation). Live at [willrwaletmein.com](https://willrwaletmein.com). Sister project: [VaultTerms](https://github.com/Robinhill85/vaultterms) (Real World Assets track) — the verified-terms registry this agent reads.
 
@@ -9,11 +9,11 @@ Built for the **#BuildwithCMC API Hackathon** (track: AI Agents and Automation).
 Ask in plain language:
 
 - *"I'm in the EU with $1,000 and I'll do basic KYC — which vaults will let me in?"* → the agent searches the VaultTerms registry (26 hand-verified RWA vaults: minimums, KYC tier, jurisdictions, redemption, fees) and answers with specific vaults, grouped by access.
-- *"Is tokenized NVDA trading at a premium to the real stock?"* → the agent calls the CoinMarketCap Real-World Assets API for the tokenized quote and its per-issuer wrappers, and compares against the blended tokenized average. If no primary-exchange quote is returned, it says so.
+- *"How do tokenized NVDA prices compare across issuers?"* → the agent calls the CoinMarketCap Real-World Assets API for the tokenized quote and its per-issuer wrappers, and compares against the blended tokenized average. If no primary-exchange quote is returned, it says so.
 - *"Which issuers tokenize gold, and how big is each?"* → CMC issuer explorer + asset list.
 - *"Deposit 100 USDC"* → the agent drafts an ERC-7540 `requestDeposit` for the **IXS High Yield Corporate Bond vault** on Avalanche using `@ixswap1/vault-agent-sdk`; you confirm in your wallet. The agent never holds keys.
 
-Every reply shows its sources (registry / CMC endpoint) as chips, and the API returns the raw CMC call log (`cmc_calls`: endpoint, params, status, credits) as visible evidence.
+Replies that use data show their sources (registry / CMC endpoint) as chips, and the API returns the raw CMC call log (`cmc_calls`: endpoint, params, status, credits) as visible evidence.
 
 ## CoinMarketCap API endpoints used
 
@@ -63,12 +63,14 @@ npm run dev
 
 **Made possible:** an issuer-centric view of RWAs (who tokenizes what, how many tokens) and a comparison of issuer wrapper prices against CMC’s blended tokenized average. The `asset_type` filter gave us clean category sizing for stocks, commodities and ETFs — categories DeFi TVL trackers don't model at all.
 
-**Got in the way:** The quoted tokenized average is not a primary-exchange reference price, so we do not claim a verified premium to NASDAQ.  the RWA endpoints are asset-centric, not vault-centric — there is no yield/APY, no TVL, and no terms (minimums, KYC, redemption), so eligibility and yield still come from our own registry and DeFiLlama. `market-pairs/list` is Growth-tier only, so venue-level liquidity was out of reach on the hackathon Startup tier. Tokenized treasury *funds* (BUIDL, USDY) are underrepresented relative to tokenized equities. A `yield` field and a `vault`/`fund` asset type would make these endpoints the backbone of any RWA product.
+**Got in the way:** The quoted tokenized average is not a primary-exchange reference price, so we do not claim a verified premium to NASDAQ. The RWA endpoints are asset-centric, not vault-centric — there is no yield/APY, no TVL, and no terms (minimums, KYC, redemption), so eligibility and yield still come from our own registry and DeFiLlama. `market-pairs/list` is Growth-tier only, so venue-level liquidity was out of reach on the hackathon Startup tier. Tokenized treasury *funds* (BUIDL, USDY) are underrepresented relative to tokenized equities. A `yield` field and a `vault`/`fund` asset type would make these endpoints the backbone of any RWA product.
 
 ## Submission materials
 
 - [Draft submission and demo script](docs/submission-draft.md)
-- [Final check report](docs/final-checks-2026-09-08.md)
+- [Current release and final wording](docs/release-2026-09-11.md)
+- [Submission plan](docs/submission-plan.md)
+- [Historical September 8 checks](docs/final-checks-2026-09-08.md)
 
 ## Source attribution
 

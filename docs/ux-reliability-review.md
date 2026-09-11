@@ -1,5 +1,7 @@
 # UX and data reliability fixes
 
+> Historical review. Figures, wording and deployment status below describe the review at that time. See the [11 September release](release-2026-09-11.md) and [current submission plan](submission-plan.md) for the final published version.
+
 The IXS headline previously used a hardcoded yield and an unconditional “live onchain” label. The contract's small positive TVL could also round to `$0`. Metrics now distinguish real zero, unavailable data and stale readings, and include their source and update date. The existing blue grid, panels, amber figures, hero, marketing voice and wallet execution flow remain.
 
 ## PR checklist

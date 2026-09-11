@@ -14,9 +14,9 @@ Video: **add the hosted demo URL before submitting**
 
 Market data can tell you what a tokenized asset is worth. It does not tell you whether you can invest from your country, meet the minimum, pass the required onboarding, or get your money back when you need it.
 
-Will RWA let me in? answers those questions in a conversation. It combines live CoinMarketCap RWA lookups with the VaultTerms registry of 26 entries with verified access terms. Ask about a tokenized stock or gold wrapper to see its prices and issuers. Give the agent your region, budget and KYC tolerance to get matching vaults, their underlying assets, minimums and trade-offs. Answers identify their sources.
+Will RWA let me in? answers those questions in a conversation. It combines live CoinMarketCap RWA lookups with the VaultTerms registry of 26 entries with verified access terms. Ask about a tokenized stock or gold wrapper to see its prices and issuers. Give the agent your region, budget and KYC tolerance to get matching vaults, their underlying assets, minimums and trade-offs. Data-backed answers identify their sources.
 
-It can also prepare unsigned deposit and redemption requests for the IXS vault on Avalanche. The user signs in their own wallet. The app reports combined IXS product TVL across Avalanche and BNB with a chain breakdown, while keeping the execution chain explicit.
+It can also prepare unsigned deposit and redemption requests for the IXS vault on Avalanche. Deposits start at $100 USDC, and the user signs in their own wallet. The app shows IXS protocol TVL sourced from rwa.io via VaultTerms, with the daily Avalanche and BNB vault balances listed separately. BNB availability is linked; proposals in this app target Avalanche.
 
 ## CMC integration and evidence
 
@@ -44,7 +44,7 @@ The app began with IXS's MIT-licensed sample vault agent, attributed in the repo
 | 10–35s | Ask “Compare the tokenized NVDA wrappers and identify their issuers.” Show prices, timestamp and CMC source chip. State that the comparison uses CMC's tokenized average. |
 | 35–55s | Show the exact CMC call in the Network response, then the public client code and real response JSON. Keep the API key out of view. |
 | 55–80s | Ask “I'm in the EU with $1,000 and basic KYC. Which vaults can I access?” Show the shortlist and an access trade-off. |
-| 80–95s | Show IXS combined TVL and chain breakdown. Explain that proposals here target Avalanche. With no wallet, the deposit prompt should ask for a connection; only show a real proposal if it was actually generated. |
+| 80–95s | Show IXS protocol TVL, the separate per-chain vault balances and the $100 USDC minimum. Explain that proposals here target Avalanche. With no wallet, the deposit prompt should ask for a connection; only show a real proposal if it was actually generated. |
 | 95–110s | Repo and demo URL. “CMC supplies the issuer and pricing layer; our registry supplies the access terms. The wallet stays in control.” |
 
 ## X draft
