@@ -1,6 +1,6 @@
 # Real CoinMarketCap API call evidence
 
-Captured on 8 September 2026. The [full request/response file](evidence/cmc-live.json) preserves CMC's response timestamps, status objects and data. Keys and authentication values are excluded. These are successful network calls, not fabricated fixtures.
+Captured on 11 September 2026. The [full request/response file](evidence/cmc-live.json) preserves CMC's response timestamps, status objects and data. Keys and authentication values are excluded. These are successful network calls, not fabricated fixtures.
 
 - [Application client](../src/lib/cmc.ts)
 - [Runnable capture script](../scripts/capture-cmc-evidence.mjs)

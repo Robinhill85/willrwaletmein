@@ -16,7 +16,7 @@ The [official CMC rules](https://coinmarketcap.com/api/resources/api-hackathon/)
 | Working deployed demo | [Live site checked](https://willrwaletmein.com) | [Live site checked](https://vaultterms.com) |
 | One track | AI Agents and Automation | Real World Assets |
 | Explicit endpoints | Five, listed in README and evidence | Three, listed in README and evidence |
-| Code + real response | Five real calls captured September 8; code and JSON public | Three real calls captured September 8; code and JSON public |
+| Code + real response | Five real calls captured September 11; code and JSON public | Three real calls captured September 8; code and JSON public |
 | API benefit / friction note | Draft ready | Draft ready |
 | Demo video | Record and host using the final scripts | Record and host using the final scripts |
 | DoraHacks URL | Create the BUIDL/submission | Create the BUIDL/submission |

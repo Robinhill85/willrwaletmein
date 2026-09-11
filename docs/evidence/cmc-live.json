@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-09-08T22:16:45.059Z",
+  "captured_at": "2026-09-11T17:19:40.473Z",
   "calls": [
     {
       "request": {
@@ -11,8 +11,8 @@
           "sort_dir": "desc"
         },
         "status": 200,
-        "creditCount": 0,
-        "elapsedMs": 220
+        "creditCount": 1,
+        "elapsedMs": 201
       },
       "response": {
         "data": {
@@ -27,20 +27,20 @@
                 {
                   "symbol": "USD",
                   "crypto_id": 2781,
-                  "average_tokenized_price": 96.03797204963425,
-                  "tokenized_market_cap": 309512774.1250811,
-                  "tokenized_volume_24h": 51221772.88486302,
-                  "last_updated": "2026-09-08T22:14:59.000Z"
+                  "average_tokenized_price": 92.70131149773519,
+                  "tokenized_market_cap": 301547928.8933894,
+                  "tokenized_volume_24h": 73256577.69389038,
+                  "last_updated": "2026-09-11T17:18:04.000Z"
                 }
               ],
               "rwa_id": 115,
               "asset_type": "stock",
-              "rwa_rank": 533,
+              "rwa_rank": 541,
               "has_tokens": true,
-              "average_tokenized_price": 96.03797204963425,
-              "tokenized_market_cap": 309512774.1250811,
-              "tokenized_volume_24h": 51221772.88486302,
-              "last_updated": "2026-09-08T22:15:38.000Z"
+              "average_tokenized_price": 92.70131149773519,
+              "tokenized_market_cap": 301547928.8933894,
+              "tokenized_volume_24h": 73256577.69389038,
+              "last_updated": "2026-09-11T17:18:49.000Z"
             },
             {
               "name": "SpaceX",
@@ -50,20 +50,20 @@
                 {
                   "symbol": "USD",
                   "crypto_id": 2781,
-                  "average_tokenized_price": 152.45761450489292,
-                  "tokenized_market_cap": 212273551.35829148,
-                  "tokenized_volume_24h": 51933172.1468933,
-                  "last_updated": "2026-09-08T22:14:59.000Z"
+                  "average_tokenized_price": 149.152221585869,
+                  "tokenized_market_cap": 214583351.9534535,
+                  "tokenized_volume_24h": 62846867.84809938,
+                  "last_updated": "2026-09-11T17:18:04.000Z"
                 }
               ],
               "rwa_id": 9,
               "asset_type": "stock",
               "rwa_rank": 9,
               "has_tokens": true,
-              "average_tokenized_price": 152.45761450489292,
-              "tokenized_market_cap": 212273551.35829148,
-              "tokenized_volume_24h": 51933172.1468933,
-              "last_updated": "2026-09-08T22:16:18.000Z"
+              "average_tokenized_price": 149.152221585869,
+              "tokenized_market_cap": 214583351.9534535,
+              "tokenized_volume_24h": 62846867.84809938,
+              "last_updated": "2026-09-11T17:18:31.000Z"
             },
             {
               "name": "MicroStrategy Inc",
@@ -73,43 +73,43 @@
                 {
                   "symbol": "USD",
                   "crypto_id": 2781,
-                  "average_tokenized_price": 136.82431225969518,
-                  "tokenized_market_cap": 161334354.38360846,
-                  "tokenized_volume_24h": 39136127.60605867,
-                  "last_updated": "2026-09-08T22:14:59.000Z"
+                  "average_tokenized_price": 133.43859401507484,
+                  "tokenized_market_cap": 165270028.24498597,
+                  "tokenized_volume_24h": 51081556.06186237,
+                  "last_updated": "2026-09-11T17:18:04.000Z"
                 }
               ],
               "rwa_id": 114,
               "asset_type": "stock",
-              "rwa_rank": 309,
+              "rwa_rank": 310,
               "has_tokens": true,
-              "average_tokenized_price": 136.82431225969518,
-              "tokenized_market_cap": 161334354.38360846,
-              "tokenized_volume_24h": 39136127.60605867,
-              "last_updated": "2026-09-08T22:15:25.000Z"
+              "average_tokenized_price": 133.43859401507484,
+              "tokenized_market_cap": 165270028.24498597,
+              "tokenized_volume_24h": 51081556.06186237,
+              "last_updated": "2026-09-11T17:18:36.000Z"
             },
             {
-              "name": "Micron Technology Inc",
-              "symbol": "MU",
-              "slug": "micron-technology",
+              "name": "Nvidia Corp",
+              "symbol": "NVDA",
+              "slug": "nvidia",
               "quotes": [
                 {
                   "symbol": "USD",
                   "crypto_id": 2781,
-                  "average_tokenized_price": 1003.9365057382719,
-                  "tokenized_market_cap": 119211669.50445572,
-                  "tokenized_volume_24h": 46793432.74843737,
-                  "last_updated": "2026-09-08T22:14:59.000Z"
+                  "average_tokenized_price": 219.263087792138,
+                  "tokenized_market_cap": 119078497.25167911,
+                  "tokenized_volume_24h": 104325877.01420783,
+                  "last_updated": "2026-09-11T17:18:04.000Z"
                 }
               ],
-              "rwa_id": 12,
+              "rwa_id": 2,
               "asset_type": "stock",
-              "rwa_rank": 14,
+              "rwa_rank": 2,
               "has_tokens": true,
-              "average_tokenized_price": 1003.9365057382719,
-              "tokenized_market_cap": 119211669.50445572,
-              "tokenized_volume_24h": 46793432.74843737,
-              "last_updated": "2026-09-08T22:16:21.000Z"
+              "average_tokenized_price": 219.263087792138,
+              "tokenized_market_cap": 119078497.25167911,
+              "tokenized_volume_24h": 104325877.01420783,
+              "last_updated": "2026-09-11T17:18:50.000Z"
             },
             {
               "name": "Tesla, Inc.",
@@ -119,29 +119,29 @@
                 {
                   "symbol": "USD",
                   "crypto_id": 2781,
-                  "average_tokenized_price": 366.55832382450217,
-                  "tokenized_market_cap": 117604564.67437041,
-                  "tokenized_volume_24h": 65517384.4376682,
-                  "last_updated": "2026-09-08T22:14:59.000Z"
+                  "average_tokenized_price": 365.195258217758,
+                  "tokenized_market_cap": 115964704.21782316,
+                  "tokenized_volume_24h": 40502203.02612127,
+                  "last_updated": "2026-09-11T17:18:04.000Z"
                 }
               ],
               "rwa_id": 14,
               "asset_type": "stock",
               "rwa_rank": 12,
               "has_tokens": true,
-              "average_tokenized_price": 366.55832382450217,
-              "tokenized_market_cap": 117604564.67437041,
-              "tokenized_volume_24h": 65517384.4376682,
-              "last_updated": "2026-09-08T22:15:33.000Z"
+              "average_tokenized_price": 365.195258217758,
+              "tokenized_market_cap": 115964704.21782316,
+              "tokenized_volume_24h": 40502203.02612127,
+              "last_updated": "2026-09-11T17:18:44.000Z"
             }
           ]
         },
         "status": {
-          "timestamp": "2026-09-08T22:16:44.131Z",
+          "timestamp": "2026-09-11T17:19:39.821Z",
           "error_code": "0",
           "error_message": "",
-          "elapsed": 8,
-          "credit_count": 0
+          "elapsed": 9,
+          "credit_count": 1
         }
       }
     },
@@ -154,7 +154,7 @@
         },
         "status": 200,
         "creditCount": 1,
-        "elapsedMs": 106
+        "elapsedMs": 100
       },
       "response": {
         "data": {
@@ -167,30 +167,30 @@
                 {
                   "symbol": "USD",
                   "crypto_id": 2781,
-                  "average_tokenized_price": 225.9309216697115,
-                  "tokenized_market_cap": 116603285.28566304,
-                  "tokenized_volume_24h": 86101896.984488,
-                  "last_updated": "2026-09-08T22:14:59.000Z"
+                  "average_tokenized_price": 219.263087792138,
+                  "tokenized_market_cap": 119078497.25167911,
+                  "tokenized_volume_24h": 104325877.01420783,
+                  "last_updated": "2026-09-11T17:18:04.000Z"
                 }
               ],
               "rwa_id": 2,
               "asset_type": "stock",
               "rwa_rank": 2,
               "has_tokens": true,
-              "average_tokenized_price": 225.9309216697115,
-              "tokenized_market_cap": 116603285.28566304,
-              "tokenized_volume_24h": 86101896.984488,
-              "last_updated": "2026-09-08T22:15:39.218Z",
+              "average_tokenized_price": 219.263087792138,
+              "tokenized_market_cap": 119078497.25167911,
+              "tokenized_volume_24h": 104325877.01420783,
+              "last_updated": "2026-09-11T17:18:50.598Z",
               "tokens": [
                 {
                   "symbol": "NVDAX",
                   "name": "NVIDIA tokenized stock (xStock)",
-                  "price": 225.79794197132634,
+                  "price": 219.3151697131742,
                   "crypto_id": 36992,
                   "issuer_id": "6878977dcbbf471de3366e85",
                   "issuer_name": "Backed Assets",
-                  "market_cap": 39249987.08,
-                  "volume_24h": 11564956.17204893
+                  "market_cap": 38841438.27,
+                  "volume_24h": 15572012.98033222
                 },
                 {
                   "symbol": "NVDA.D",
@@ -205,62 +205,62 @@
                 {
                   "symbol": "NVDAon",
                   "name": "NVIDIA Tokenized Stock (Ondo)",
-                  "price": 225.8020632100008,
+                  "price": 219.23707195692182,
                   "crypto_id": 38093,
                   "issuer_id": "688ca4ccabae9b5b9fb3167a",
                   "issuer_name": "Ondo Assets",
-                  "market_cap": 38105122.54,
-                  "volume_24h": 2683422.8486732
+                  "market_cap": 36541889.29,
+                  "volume_24h": 3024376.49093886
                 },
                 {
                   "symbol": "NVDA",
                   "name": "NVIDIA (Derivatives)",
-                  "price": 225.81318280717775,
+                  "price": 219.22313229577944,
                   "crypto_id": 38153,
                   "issuer_id": "695e11f774b54210f3b95dc3",
                   "issuer_name": "NA (Derivatives)",
                   "market_cap": 0,
-                  "volume_24h": 339233.9283101
+                  "volume_24h": 1627579.21089677
                 },
                 {
                   "symbol": "NVDAB",
                   "name": "NVIDIA Tokenized bStocks",
-                  "price": 225.816291137359,
+                  "price": 219.06235770678654,
                   "crypto_id": 40215,
                   "issuer_id": "6a2aed5097c45356b1a5f710",
                   "issuer_name": "bStocks",
-                  "market_cap": 16442399.73,
-                  "volume_24h": 10763106.70220195
+                  "market_cap": 18141043.97,
+                  "volume_24h": 24610274.9980953
                 },
                 {
                   "symbol": "rNVDA",
                   "name": "NVIDIA Tokenized Stock (Reality)",
-                  "price": 225.67846504938288,
+                  "price": 219.07975936508294,
                   "crypto_id": 40605,
                   "issuer_id": "6a43600c282e7240b76c8bbb",
                   "issuer_name": "Reality",
-                  "market_cap": 4452679.11,
-                  "volume_24h": 522246.11508784
+                  "market_cap": 4268850.2,
+                  "volume_24h": 378372.64453283
                 },
                 {
                   "symbol": "NVDA",
                   "name": "NVIDIA Tokenized Stock (Robinhood)",
-                  "price": 225.7188503040548,
+                  "price": 219.12534818501726,
                   "crypto_id": 40685,
                   "issuer_id": "6a465832fbe3004b1a0ea2dd",
                   "issuer_name": "Robinhood",
-                  "market_cap": 17902771.43,
-                  "volume_24h": 59335959.08456925
+                  "market_cap": 20717675.95,
+                  "volume_24h": 50728407.67859869
                 },
                 {
                   "symbol": "WNVDAX",
                   "name": "Wrapped NVIDIA Tokenized stock (xStock)",
-                  "price": 226.1523127908516,
+                  "price": 219.5459204234465,
                   "crypto_id": 37270,
                   "issuer_id": "6878977dcbbf471de3366e85",
                   "issuer_name": "Backed Assets",
-                  "market_cap": 449875.5,
-                  "volume_24h": 870171.76349895
+                  "market_cap": 552128.73,
+                  "volume_24h": 8449163.0831122
                 }
               ],
               "tradfi_markets": [
@@ -283,85 +283,85 @@
                 {
                   "symbol": "USD",
                   "crypto_id": 2781,
-                  "average_tokenized_price": 4355.969358909986,
-                  "tokenized_market_cap": 4644749680.962821,
-                  "tokenized_volume_24h": 416448088.4277441,
-                  "last_updated": "2026-09-08T22:14:59.000Z"
+                  "average_tokenized_price": 4363.984485119645,
+                  "tokenized_market_cap": 4654893761.410252,
+                  "tokenized_volume_24h": 545824381.3257848,
+                  "last_updated": "2026-09-11T17:18:04.000Z"
                 }
               ],
               "rwa_id": 1,
               "asset_type": "commodity",
               "rwa_rank": 1,
               "has_tokens": true,
-              "average_tokenized_price": 4355.969358909986,
-              "tokenized_market_cap": 4644749680.962821,
-              "tokenized_volume_24h": 416448088.4277441,
-              "last_updated": "2026-09-08T22:15:37.276Z",
+              "average_tokenized_price": 4363.984485119645,
+              "tokenized_market_cap": 4654893761.410252,
+              "tokenized_volume_24h": 545824381.3257848,
+              "last_updated": "2026-09-11T17:18:48.609Z",
               "tokens": [
                 {
                   "symbol": "PAXG",
                   "name": "PAX Gold",
-                  "price": 4357.706241678997,
+                  "price": 4367.0159145617745,
                   "crypto_id": 4705,
                   "issuer_id": "68904c24abae9b5b9fb35815",
                   "issuer_name": "Paxos",
-                  "market_cap": 1884722382.47,
-                  "volume_24h": 172564308.88021934
+                  "market_cap": 1890510005.34,
+                  "volume_24h": 250448484.88014728
                 },
                 {
                   "symbol": "XAUt",
                   "name": "Tether Gold",
-                  "price": 4356.5948703953245,
+                  "price": 4362.851885145436,
                   "crypto_id": 5176,
                   "issuer_id": "68904e9cabae9b5b9fb358ac",
                   "issuer_name": "Tether Holdings",
-                  "market_cap": 2669824411.57,
-                  "volume_24h": 241483625.57426283
+                  "market_cap": 2673658858.25,
+                  "volume_24h": 292944893.82001865
                 },
                 {
                   "symbol": "XAUM",
                   "name": "Matrixdock Gold",
-                  "price": 4346.528963382447,
+                  "price": 4357.149983850891,
                   "crypto_id": 34212,
                   "issuer_id": "68905a7babae9b5b9fb35a8d",
                   "issuer_name": "Matrixdock",
-                  "market_cap": 47699908.58,
-                  "volume_24h": 463685.25170969
+                  "market_cap": 47815029.29,
+                  "volume_24h": 438389.09677386
                 },
                 {
                   "symbol": "CGO",
                   "name": "Comtech Gold",
-                  "price": 139.97392114503455,
+                  "price": 139.933759113976,
                   "crypto_id": 20245,
                   "issuer_id": "68904cceabae9b5b9fb35839",
                   "issuer_name": "Comtech Gold",
-                  "market_cap": 19736322.88,
-                  "volume_24h": 897996.12686001
+                  "market_cap": 19730660.04,
+                  "volume_24h": 902644.04424543
                 },
                 {
                   "symbol": "VNXAU",
                   "name": "VNX Gold",
-                  "price": 139.8048752624342,
+                  "price": 140.67146911746931,
                   "crypto_id": 22492,
                   "issuer_id": "68905b43abae9b5b9fb35a95",
                   "issuer_name": "VNX",
-                  "market_cap": 5885785.25,
-                  "volume_24h": 1972.51698231
+                  "market_cap": 5922268.85,
+                  "volume_24h": 23618.57538661
                 },
                 {
                   "symbol": "XAUT0",
                   "name": "Tether Gold Tokens",
-                  "price": 4354.430400163049,
+                  "price": 4370.685203366242,
                   "crypto_id": 37082,
                   "issuer_id": "68904e9cabae9b5b9fb358ac",
                   "issuer_name": "Tether Holdings",
-                  "market_cap": 17086290.34,
-                  "volume_24h": 267210.1102779
+                  "market_cap": 17368304.45,
+                  "volume_24h": 1071604.75740402
                 },
                 {
                   "symbol": "XAU",
                   "name": "Gold (Derivatives)",
-                  "price": 4358.904452713712,
+                  "price": 4367.794245259337,
                   "crypto_id": 39344,
                   "issuer_id": "695e11f774b54210f3b95dc3",
                   "issuer_name": "NA (Derivatives)",
@@ -374,10 +374,10 @@
           ]
         },
         "status": {
-          "timestamp": "2026-09-08T22:16:44.241Z",
+          "timestamp": "2026-09-11T17:19:39.931Z",
           "error_code": "0",
           "error_message": "",
-          "elapsed": 5,
+          "elapsed": 4,
           "credit_count": 1
         }
       }
@@ -391,7 +391,7 @@
         },
         "status": 200,
         "creditCount": 1,
-        "elapsedMs": 269
+        "elapsedMs": 249
       },
       "response": {
         "data": {
@@ -420,7 +420,7 @@
           ]
         },
         "status": {
-          "timestamp": "2026-09-08T22:16:44.488Z",
+          "timestamp": "2026-09-11T17:19:40.177Z",
           "error_code": "0",
           "error_message": "",
           "elapsed": 2,
@@ -436,8 +436,8 @@
           "active": "true"
         },
         "status": 200,
-        "creditCount": 0,
-        "elapsedMs": 246
+        "creditCount": 1,
+        "elapsedMs": 249
       },
       "response": {
         "data": {
@@ -482,11 +482,11 @@
           "has_more": true
         },
         "status": {
-          "timestamp": "2026-09-08T22:16:44.759Z",
+          "timestamp": "2026-09-11T17:19:40.431Z",
           "error_code": "0",
           "error_message": "",
           "elapsed": 3,
-          "credit_count": 0
+          "credit_count": 1
         }
       }
     },
@@ -499,7 +499,7 @@
         },
         "status": 200,
         "creditCount": 1,
-        "elapsedMs": 275
+        "elapsedMs": 101
       },
       "response": {
         "data": {
@@ -1113,7 +1113,7 @@
           "has_more": true
         },
         "status": {
-          "timestamp": "2026-09-08T22:16:45.006Z",
+          "timestamp": "2026-09-11T17:19:40.528Z",
           "error_code": "0",
           "error_message": "",
           "elapsed": 3,
